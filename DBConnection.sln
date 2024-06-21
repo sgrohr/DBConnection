@@ -13,6 +13,8 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Tools", "..\..\Bibliotheken
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDO", "..\..\Bibliotheken\Basis\SDO\SDO.csproj", "{0480FE52-D075-4FEB-AF8F-3EC71874EBF3}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "FLPExcel", "..\..\Bibliotheken\Basis\FLPExcel\FLPExcel.vbproj", "{ABD64D40-AE77-40B2-9DC1-071796785B58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,12 @@ Global
 		{0480FE52-D075-4FEB-AF8F-3EC71874EBF3}.Release_DBE|Any CPU.Build.0 = Release_DBE|Any CPU
 		{0480FE52-D075-4FEB-AF8F-3EC71874EBF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0480FE52-D075-4FEB-AF8F-3EC71874EBF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABD64D40-AE77-40B2-9DC1-071796785B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABD64D40-AE77-40B2-9DC1-071796785B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABD64D40-AE77-40B2-9DC1-071796785B58}.Release_DBE|Any CPU.ActiveCfg = Release|Any CPU
+		{ABD64D40-AE77-40B2-9DC1-071796785B58}.Release_DBE|Any CPU.Build.0 = Release|Any CPU
+		{ABD64D40-AE77-40B2-9DC1-071796785B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABD64D40-AE77-40B2-9DC1-071796785B58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
