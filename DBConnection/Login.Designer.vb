@@ -32,6 +32,7 @@ Partial Class Login
         Label3 = New Label()
         Label4 = New Label()
         cmdEnde = New Button()
+        cbServer = New ComboBox()
         SuspendLayout()
         ' 
         ' cmdLogin
@@ -45,11 +46,11 @@ Partial Class Login
         ' 
         ' txtServer
         ' 
-        txtServer.Location = New Point(88, 12)
+        txtServer.Location = New Point(52, 128)
         txtServer.Name = "txtServer"
         txtServer.Size = New Size(114, 23)
         txtServer.TabIndex = 1
-        txtServer.Text = "10.18.32.15"
+        txtServer.Visible = False
         ' 
         ' txtUser
         ' 
@@ -57,7 +58,6 @@ Partial Class Login
         txtUser.Name = "txtUser"
         txtUser.Size = New Size(114, 23)
         txtUser.TabIndex = 2
-        txtUser.Text = "CADLayer"
         ' 
         ' txtPasswort
         ' 
@@ -66,7 +66,6 @@ Partial Class Login
         txtPasswort.PasswordChar = "*"c
         txtPasswort.Size = New Size(114, 23)
         txtPasswort.TabIndex = 3
-        txtPasswort.Text = "Fwt$CAD!2o24"
         ' 
         ' txtDatenbank
         ' 
@@ -74,7 +73,6 @@ Partial Class Login
         txtDatenbank.Name = "txtDatenbank"
         txtDatenbank.Size = New Size(114, 23)
         txtDatenbank.TabIndex = 4
-        txtDatenbank.Text = "Software"
         ' 
         ' Label1
         ' 
@@ -121,11 +119,21 @@ Partial Class Login
         cmdEnde.Text = "Beenden"
         cmdEnde.UseVisualStyleBackColor = True
         ' 
+        ' cbServer
+        ' 
+        cbServer.FormattingEnabled = True
+        cbServer.Items.AddRange(New Object() {"<DB auswählen>", "Software", "FES-Test", "FES-Produktiv"})
+        cbServer.Location = New Point(88, 12)
+        cbServer.Name = "cbServer"
+        cbServer.Size = New Size(114, 23)
+        cbServer.TabIndex = 10
+        ' 
         ' Login
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(215, 174)
+        Controls.Add(cbServer)
         Controls.Add(cmdEnde)
         Controls.Add(Label4)
         Controls.Add(Label3)
@@ -154,5 +162,6 @@ Partial Class Login
     Friend WithEvents Label3 As Label
     Friend WithEvents Label4 As Label
     Friend WithEvents cmdEnde As Button
+    Friend WithEvents cbServer As ComboBox
 
 End Class
