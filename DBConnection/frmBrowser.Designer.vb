@@ -33,7 +33,7 @@ Partial Class frmBrowser
         cmdConnectoren = New Button()
         tabMain = New TabControl()
         TabTabellen = New TabPage()
-        TabImport = New TabPage()
+        TpImport = New TabPage()
         spImport = New SplitContainer()
         cbUeberführen = New CheckBox()
         txtImportfile = New TextBox()
@@ -69,7 +69,7 @@ Partial Class frmBrowser
         spTabellen.SuspendLayout()
         tabMain.SuspendLayout()
         TabTabellen.SuspendLayout()
-        TabImport.SuspendLayout()
+        TpImport.SuspendLayout()
         CType(spImport, ComponentModel.ISupportInitialize).BeginInit()
         spImport.Panel1.SuspendLayout()
         spImport.Panel2.SuspendLayout()
@@ -168,7 +168,7 @@ Partial Class frmBrowser
         ' tabMain
         ' 
         tabMain.Controls.Add(TabTabellen)
-        tabMain.Controls.Add(TabImport)
+        tabMain.Controls.Add(TpImport)
         tabMain.Controls.Add(tpBenutzer)
         tabMain.Controls.Add(tpSubscritions)
         tabMain.Controls.Add(tpLizenznutzung)
@@ -190,16 +190,16 @@ Partial Class frmBrowser
         TabTabellen.Text = "Tabellen"
         TabTabellen.UseVisualStyleBackColor = True
         ' 
-        ' TabImport
+        ' TpImport
         ' 
-        TabImport.Controls.Add(spImport)
-        TabImport.Location = New Point(4, 24)
-        TabImport.Name = "TabImport"
-        TabImport.Padding = New Padding(3)
-        TabImport.Size = New Size(1291, 608)
-        TabImport.TabIndex = 1
-        TabImport.Text = "Import"
-        TabImport.UseVisualStyleBackColor = True
+        TpImport.Controls.Add(spImport)
+        TpImport.Location = New Point(4, 24)
+        TpImport.Name = "TpImport"
+        TpImport.Padding = New Padding(3)
+        TpImport.Size = New Size(1291, 608)
+        TpImport.TabIndex = 1
+        TpImport.Text = "Import"
+        TpImport.UseVisualStyleBackColor = True
         ' 
         ' spImport
         ' 
@@ -270,6 +270,8 @@ Partial Class frmBrowser
         ' 
         ' dgExcelcontent
         ' 
+        dgExcelcontent.AllowUserToAddRows = False
+        dgExcelcontent.AllowUserToDeleteRows = False
         dgExcelcontent.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgExcelcontent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgExcelcontent.Dock = DockStyle.Fill
@@ -346,6 +348,8 @@ Partial Class frmBrowser
         ' 
         ' dgvBenutzer
         ' 
+        dgvBenutzer.AllowUserToAddRows = False
+        dgvBenutzer.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvBenutzer.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         dgvBenutzer.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
@@ -424,6 +428,8 @@ Partial Class frmBrowser
         ' 
         ' dgvSubsriptions
         ' 
+        dgvSubsriptions.AllowUserToAddRows = False
+        dgvSubsriptions.AllowUserToDeleteRows = False
         DataGridViewCellStyle2.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvSubsriptions.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle2
         dgvSubsriptions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
@@ -502,6 +508,8 @@ Partial Class frmBrowser
         ' 
         ' dgvLizenznutzung
         ' 
+        dgvLizenznutzung.AllowUserToAddRows = False
+        dgvLizenznutzung.AllowUserToDeleteRows = False
         DataGridViewCellStyle3.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvLizenznutzung.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle3
         dgvLizenznutzung.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
@@ -527,7 +535,7 @@ Partial Class frmBrowser
         spTabellen.ResumeLayout(False)
         tabMain.ResumeLayout(False)
         TabTabellen.ResumeLayout(False)
-        TabImport.ResumeLayout(False)
+        TpImport.ResumeLayout(False)
         spImport.Panel1.ResumeLayout(False)
         spImport.Panel1.PerformLayout()
         spImport.Panel2.ResumeLayout(False)
@@ -564,7 +572,7 @@ Partial Class frmBrowser
     Friend WithEvents cmdConnectoren As Button
     Friend WithEvents tabMain As TabControl
     Friend WithEvents TabTabellen As TabPage
-    Friend WithEvents TabImport As TabPage
+    Friend WithEvents TpImport As TabPage
     Friend WithEvents txtImportfile As TextBox
     Friend WithEvents cmdImpFile As Button
     Friend WithEvents lblSheets As Label
