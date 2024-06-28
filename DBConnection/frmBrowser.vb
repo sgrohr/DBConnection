@@ -17,17 +17,23 @@ Public Class frmBrowser
 
         Dim BenutzerTeams As DataTable = cmd.GetTableFromSelect("SYS", "select distinct team_name from benutzer")
         cbUserTeam.Items.Add(C_None)
+        cbNutzTeam.Items.Add(C_None)
         For Each dr As DataRow In BenutzerTeams.Rows
             cbUserTeam.Items.Add(dr(0))
+            cbNutzTeam.Items.Add(dr(0))
         Next
         cbUserTeam.SelectedIndex = 0
+        cbNutzTeam.SelectedIndex = 0
 
         Dim BenutzerGruppen As DataTable = cmd.GetTableFromSelect("SYS", "select distinct group_name from benutzer order by group_name")
         cbUserGruppe.Items.Add(C_None)
+        cbNutzGruppe.Items.Add(C_None)
         For Each dr As DataRow In BenutzerGruppen.Rows
             cbUserGruppe.Items.Add(dr(0))
+            cbNutzGruppe.Items.Add(dr(0))
         Next
         cbUserGruppe.SelectedIndex = 0
+        cbNutzGruppe.SelectedIndex = 0
 
         Dim SubBenutzer As DataTable = cmd.GetTableFromSelect("SYS", "select first_name,last_name from benutzer order by last_name")
         cbSubBenutzer.Items.Add(C_None)
@@ -89,33 +95,46 @@ Public Class frmBrowser
             Dim dt As Data.DataTable = FLPExcel.clsExcelImport.Excelfile2Datatable(selectedsheet, True)
             dgExcelcontent.DataSource = dt
             If cbUeberführen.Checked Then
-                If selectedsheet.ToLower = "benutzer" Then
-                    BenutzerGrundImport(dt)
-                    MsgBox("Import erfolgreich abgeschlossen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmende")
-                    Application.Exit()
-                    Return
-                End If
-                If MsgBox("Es werden die Daten für " & selectedsheet & " importiert. Ist das ok?", MsgBoxStyle.YesNo, "Import") = MsgBoxResult.Yes Then
-                    Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
-                    Dim anz As Integer = cmd.ExecuteScalarSlowAndOld("SYS", "select count(*) from usage where month='" & selectedsheet & "'")
-                    If anz > 0 Then
-                        If MsgBox("Es liegen im Zeitraum " & selectedsheet & " bereits " & anz & " Datensätze vor." & vbCrLf &
-                               "Diese Datensätze werden vor dem Import gelöscht", MsgBoxStyle.YesNo, "Daten werden gelöscht!") = MsgBoxResult.Yes Then
-                            cmd.ExecuteNonQueryOld("SYS", "delete from usage where month='" & selectedsheet & "'")
-                            cmd.ExecuteNonQueryOld("SYS", "delete from subscription where month='" & selectedsheet & "'")
+                Select Case selectedsheet.ToLower
+                    Case "benutzer"
+                        BenutzerGrundImport(dt)
+                        MsgBox("Import erfolgreich abgeschlossen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmende")
+                        Application.Exit()
+                        Return
+                    Case "nutzung"
+                        NutzungsImport(dt)
+                        MsgBox("Import erfolgreich abgeschlossen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmende")
+                        Application.Exit()
+                        Return
+                    Case "abonnements"
+                        AbonnementImport(dt)
+                        MsgBox("Import erfolgreich abgeschlossen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmende")
+                        Application.Exit()
+                        Return
+                    Case Else
+                        If MsgBox("Es werden die Daten für " & selectedsheet & " importiert. Ist das ok?", MsgBoxStyle.YesNo, "Import") = MsgBoxResult.Yes Then
+                            Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
+                            Dim anz As Integer = cmd.ExecuteScalarSlowAndOld("SYS", "select count(*) from usage where month='" & selectedsheet & "'")
+                            If anz > 0 Then
+                                If MsgBox("Es liegen im Zeitraum " & selectedsheet & " bereits " & anz & " Datensätze vor." & vbCrLf &
+                                       "Diese Datensätze werden vor dem Import gelöscht", MsgBoxStyle.YesNo, "Daten werden gelöscht!") = MsgBoxResult.Yes Then
+                                    cmd.ExecuteNonQueryOld("SYS", "delete from usage where month='" & selectedsheet & "'")
+                                    cmd.ExecuteNonQueryOld("SYS", "delete from subscription where month='" & selectedsheet & "'")
+                                Else
+                                    MsgBox("Vorgang abgebrochen. Es wird nichts importiert. Bitte kontrollieren Sie die Daten", MsgBoxStyle.OkOnly, "Abbruch")
+                                    Return
+                                End If
+                            End If
+                            BenutzerImport(dt)
+                            SubscriptionImport(dt, selectedsheet)
+                            UsageImport(dt, selectedsheet)
                         Else
-                            MsgBox("Vorgang abgebrochen. Es wird nichts importiert. Bitte kontrollieren Sie die Daten", MsgBoxStyle.OkOnly, "Abbruch")
-                            Return
+                            MsgBox("Import abgebrochen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmabbruch")
+                            Application.Exit()
                         End If
-                    End If
-                    BenutzerImport(dt)
-                    SubscriptionImport(dt, selectedsheet)
-                    UsageImport(dt, selectedsheet)
-                End If
-            Else
-                MsgBox("Import abgebrochen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmabbruch")
-                Application.Exit()
+                End Select
             End If
+
             If log Then
                 Tools.clsLogfile.CloseLogFile()
                 MsgBox("Logdatei erstellt. Diese finden Sie unter " & "c:\tmp\ImportFehler\" & System.Environment.UserName, MsgBoxStyle.Information, "Fehler gefunden!")
@@ -177,7 +196,6 @@ Public Class frmBrowser
                     cmd.ExecuteNonQueryOld("SYS", strsql)
                     zaehler += 1
                 Else
-
                     Dim id As Integer = UserID(excelrow("email"), excelrow("team_alias"))
                     If id > 0 Then
                         Dim strsql As String = "update benutzer set " &
@@ -202,10 +220,10 @@ Public Class frmBrowser
     Private Sub SubscriptionImport(dt As DataTable, monat As String)
         Dim updatezaehler As Integer = 0
         Dim insertzaehler As Integer = 0
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
         For Each excelrow As DataRow In dt.Rows
             If excelrow("access_option") = "Subscription" Then
                 If Userexist(excelrow("email"), excelrow("team_alias")) Then
-                    Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
                     Dim UID As Integer = UserID(excelrow("email"), excelrow("team_alias"))
                     cmd.ExecuteNonQueryOld("SYS", "insert into subscription (userid,offering_name,assigned_date,unassigned_date," &
                                            "seat_assignment,user_activity,days_inactive,month) values(" &
@@ -219,18 +237,18 @@ Public Class frmBrowser
                                            monat & "')")
                     insertzaehler += 1
                     'End If
-                    cmd = Nothing
                 End If
             End If
         Next
+        cmd = Nothing
         MsgBox("Insgesamt wurden " & insertzaehler & " neue Subscriptions angelegt", MsgBoxStyle.OkOnly, "Abgeschlossen!")
     End Sub
 
     Private Sub UsageImport(dt As DataTable, monat As String)
         Dim insertzaehler As Integer = 0
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
         For Each excelrow As DataRow In dt.Rows
             If Userexist(excelrow("email"), excelrow("team_alias")) Then
-                Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
                 Dim UID As Integer = UserID(excelrow("email"), excelrow("team_alias"))
                 cmd.ExecuteNonQueryOld("SYS", "insert into usage (userid,month,offering_name,access_option,days_used,monthly_average,tokens_used,last_accessed) values(" &
                                                            UID & ",'" &
@@ -242,14 +260,65 @@ Public Class frmBrowser
                                                            getIntegervalue(excelrow("tokens_used")) & "," &
                                                           getDatestring(excelrow("last_accessed")) & ")")
                 insertzaehler += 1
-                cmd = Nothing
             Else
                 log = True
                 Tools.clsLogfile.LogInfo("Benutzer:" & excelrow("first_name") & excelrow("last_name") & " fehlt in der Benutzertabelle")
             End If
         Next
+        cmd = Nothing
         MsgBox("Es wurden " & "Insgesamt wurden " & insertzaehler & " neue Datensätze importiert", MsgBoxStyle.OkOnly, "Abgeschlossen!")
 
+    End Sub
+
+    Private Sub NutzungsImport(dt As DataTable)
+        Dim insertzaehler As Integer = 0
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
+        cmd.ExecuteNonQueryOld("SYS", "truncate nutzung")
+        For Each excelrow As DataRow In dt.Rows
+            If Userexist(excelrow("email"), excelrow("team_alias")) Then
+                Dim UID As Integer = UserID(excelrow("email"), excelrow("team_alias"))
+                Dim strSql As String = "insert into nutzung (userid,offering_name,product_name,version,day_used,tokens_used,access_option) values(" &
+                                                           UID & ",'" &
+                                                           excelrow("offering_name") & "','" &
+                                                           excelrow("product_name") & "','" &
+                                                           excelrow("version") & "'," &
+                                                           getDatestring(excelrow("day_used")) & ",'" &
+                                                           excelrow("tokens_used") & "','" &
+                                                           excelrow("access_option") & "')"
+                cmd.ExecuteNonQueryOld("SYS", strSql)
+                insertzaehler += 1
+            Else
+                log = True
+                Tools.clsLogfile.LogInfo("Benutzer:" & excelrow("first_name") & excelrow("last_name") & " fehlt in der Benutzertabelle")
+            End If
+        Next
+        cmd = Nothing
+        MsgBox("Es wurden " & "Insgesamt wurden " & insertzaehler & " neue Datensätze importiert", MsgBoxStyle.OkOnly, "Abgeschlossen!")
+    End Sub
+
+    Private Sub AbonnementImport(dt As DataTable)
+        Dim insertzaehler As Integer = 0
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
+        cmd.ExecuteNonQueryOld("SYS", "truncate abonnements")
+        For Each excelrow As DataRow In dt.Rows
+            Dim strSql As String = "insert into abonnements (team_alias,offering_name,contract_number,subscription_id,term,start_date,end_date," &
+                                   "autorenew_date,subscription_status,seat_quantity,reseller_email,reseller_name) values('" &
+                                   excelrow("team_alias") & "','" &
+                                   excelrow("offering_name") & "','" &
+                                   excelrow("contract_number") & "','" &
+                                   excelrow("subscription_id") & "','" &
+                                   excelrow("term") & "'," &
+                                   getDatestring(excelrow("start_date")) & "," &
+                                   getDatestring(excelrow("end_date")) & "," &
+                                   getDatestring(excelrow("autorenew_date")) & ",'" &
+                                   excelrow("subscription_status") & "','" &
+                                   excelrow("seat_quantity") & "','" &
+                                   excelrow("reseller_email") & "','" &
+                                   excelrow("reseller_name") & "')"
+            cmd.ExecuteNonQueryOld("SYS", strSql)
+            insertzaehler += 1
+        Next
+        MsgBox("Es wurden " & "Insgesamt wurden " & insertzaehler & " neue Datensätze importiert", MsgBoxStyle.OkOnly, "Abgeschlossen!")
     End Sub
 
     Private Function getDatestring(datum As Object) As String
@@ -330,39 +399,39 @@ Public Class frmBrowser
         End Try
     End Sub
 
-#Region "Tabellen füllen"
+#Region "Datagridviews füllen"
     Private Sub cbSubBenutzer_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbSubBenutzer.SelectedIndexChanged, cbSubMonat.SelectedIndexChanged
         If cbSubBenutzer.Items.Count = 0 Or cbSubMonat.Items.Count = 0 Then Return
-        Dim selectedUser As String = cbSubBenutzer.SelectedItem.ToString
-        Dim selectedMonth As String = cbSubMonat.SelectedItem.ToString
-        Dim VorNachname As String() = Split(selectedUser, ", ")
-        Dim Vorname As String = ""
-        Dim Nachname As String = ""
+        Dim selectedUser = cbSubBenutzer.SelectedItem.ToString
+        Dim selectedMonth = cbSubMonat.SelectedItem.ToString
+        Dim VorNachname = Split(selectedUser, ", ")
+        Dim Vorname = ""
+        Dim Nachname = ""
         Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
         If selectedUser <> C_None Then
             If VorNachname.Count = 2 Then
                 If selectedMonth <> C_None Then
-                    Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select * from vsubscription where vorname='" & VorNachname(1) &
+                    Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where vorname='" & VorNachname(1) &
                                                                  "' and nachname='" & VorNachname(0) & "'" &
                                                                  " and month='" & selectedMonth & "' order by produkt")
                     dgvSubsriptions.DataSource = dt
-                    Me.Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                    Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
                 Else
-                    Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select * from vsubscription where vorname='" & VorNachname(1) &
+                    Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where vorname='" & VorNachname(1) &
                                                                  "' and nachname='" & VorNachname(0) & "' order by produkt")
                     dgvSubsriptions.DataSource = dt
-                    Me.Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                    Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
                 End If
             End If
         Else
             If selectedMonth <> C_None Then
-                Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select * from vsubscription where monat='" & selectedMonth & "' order by email")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where monat='" & selectedMonth & "' order by email")
                 dgvSubsriptions.DataSource = dt
-                Me.Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             Else
-                Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select * from vsubscription order by email,month")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription order by email,month")
                 dgvSubsriptions.DataSource = dt
-                Me.Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             End If
         End If
     End Sub
@@ -370,29 +439,29 @@ Public Class frmBrowser
     Private Sub cbUserTeam_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbUserTeam.SelectedIndexChanged, cbUserGruppe.SelectedIndexChanged
         If cbUserGruppe.Items.Count = 0 Then Return
         If cbUserTeam.Items.Count = 0 Then Return
-        Dim selectedTeam As String = cbUserTeam.SelectedItem.ToString
-        Dim selectedGroup As String = cbUserGruppe.SelectedItem.ToString
+        Dim selectedTeam = cbUserTeam.SelectedItem.ToString
+        Dim selectedGroup = cbUserGruppe.SelectedItem.ToString
         Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
         If selectedTeam <> C_None Then
             If selectedGroup <> C_None Then
-                Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select * from benutzer where team_name='" & selectedTeam &
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer where team_name='" & selectedTeam &
                                                              "' and group_name='" & selectedGroup & "' order by group_name")
                 dgvBenutzer.DataSource = dt
-                Me.Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             Else
-                Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select * from benutzer where team_name='" & selectedTeam & "' order by team_name")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer where team_name='" & selectedTeam & "' order by team_name")
                 dgvBenutzer.DataSource = dt
-                Me.Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             End If
         Else
             If selectedGroup <> C_None Then
-                Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select * from benutzer where group_name='" & selectedGroup & "' order by group_name")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer where group_name='" & selectedGroup & "' order by group_name")
                 dgvBenutzer.DataSource = dt
-                Me.Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             Else
-                Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select * from benutzer order by email")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer order by email")
                 dgvBenutzer.DataSource = dt
-                Me.Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             End If
         End If
     End Sub
@@ -435,6 +504,37 @@ Public Class frmBrowser
 
     End Sub
 
+    Private Sub cbNutzungTeam_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbNutzTeam.SelectedIndexChanged, cbNutzGruppe.SelectedIndexChanged
+        If cbNutzGruppe.Items.Count = 0 Then Return
+        If cbNutzTeam.Items.Count = 0 Then Return
+        Dim selectedTeam = cbNutzTeam.SelectedItem.ToString
+        Dim selectedGroup = cbNutzGruppe.SelectedItem.ToString
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
+        If selectedTeam <> C_None Then
+            If selectedGroup <> C_None Then
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where team_name='" & selectedTeam &
+                                                             "' and group_name='" & selectedGroup & "' order by group_name")
+                dgvNutzung.DataSource = dt
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+            Else
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where team_name='" & selectedTeam & "' order by team_name")
+                dgvNutzung.DataSource = dt
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+            End If
+        Else
+            If selectedGroup <> C_None Then
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where group_name='" & selectedGroup & "' order by group_name")
+                dgvNutzung.DataSource = dt
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+            Else
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung order by email")
+                dgvNutzung.DataSource = dt
+                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+            End If
+        End If
+    End Sub
+
+
     Private Sub tabMain_SelectedIndexChanged(sender As Object, e As EventArgs) Handles tabMain.SelectedIndexChanged
         Select Case tabMain.SelectedTab.Name
             Case "tpBenutzer"
@@ -445,6 +545,13 @@ Public Class frmBrowser
                 Me.Text = titel & " | " & dgvSubsriptions.Rows.Count & " angezeigte Datensätze"
             Case "TpImport"
                 Me.Text = titel & " | " & dgExcelcontent.Rows.Count & " angezeigte Datensätze"
+            Case "tpAbos"
+                Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from abonnements")
+                dgvAbos.DataSource = dt
+                Me.Text = titel & " | " & dgvAbos.Rows.Count & " angezeigte Datensätze"
+            Case "tpNutzung"
+                Me.Text = titel & " | " & dgvNutzung.Rows.Count & " angezeigte Datensätze"
             Case Else
                 Me.Text = titel
         End Select

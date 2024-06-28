@@ -25,6 +25,8 @@ Partial Class frmBrowser
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
         cmdSoftware = New Button()
         dgvInhalt = New DataGridView()
         spTabellen = New SplitContainer()
@@ -62,6 +64,16 @@ Partial Class frmBrowser
         Label6 = New Label()
         cbLizenzBenutzer = New ComboBox()
         dgvLizenznutzung = New DataGridView()
+        tpAbos = New TabPage()
+        spAbos = New SplitContainer()
+        dgvAbos = New DataGridView()
+        tpNutzung = New TabPage()
+        spNutzung = New SplitContainer()
+        Label9 = New Label()
+        cbNutzGruppe = New ComboBox()
+        Label10 = New Label()
+        cbNutzTeam = New ComboBox()
+        dgvNutzung = New DataGridView()
         CType(dgvInhalt, ComponentModel.ISupportInitialize).BeginInit()
         CType(spTabellen, ComponentModel.ISupportInitialize).BeginInit()
         spTabellen.Panel1.SuspendLayout()
@@ -93,6 +105,17 @@ Partial Class frmBrowser
         spLizenznutzung.Panel2.SuspendLayout()
         spLizenznutzung.SuspendLayout()
         CType(dgvLizenznutzung, ComponentModel.ISupportInitialize).BeginInit()
+        tpAbos.SuspendLayout()
+        CType(spAbos, ComponentModel.ISupportInitialize).BeginInit()
+        spAbos.Panel2.SuspendLayout()
+        spAbos.SuspendLayout()
+        CType(dgvAbos, ComponentModel.ISupportInitialize).BeginInit()
+        tpNutzung.SuspendLayout()
+        CType(spNutzung, ComponentModel.ISupportInitialize).BeginInit()
+        spNutzung.Panel1.SuspendLayout()
+        spNutzung.Panel2.SuspendLayout()
+        spNutzung.SuspendLayout()
+        CType(dgvNutzung, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' cmdSoftware
@@ -172,6 +195,8 @@ Partial Class frmBrowser
         tabMain.Controls.Add(tpBenutzer)
         tabMain.Controls.Add(tpSubscritions)
         tabMain.Controls.Add(tpLizenznutzung)
+        tabMain.Controls.Add(tpAbos)
+        tabMain.Controls.Add(tpNutzung)
         tabMain.Dock = DockStyle.Fill
         tabMain.Location = New Point(0, 0)
         tabMain.Name = "tabMain"
@@ -520,9 +545,128 @@ Partial Class frmBrowser
         dgvLizenznutzung.Size = New Size(1053, 602)
         dgvLizenznutzung.TabIndex = 0
         ' 
+        ' tpAbos
+        ' 
+        tpAbos.Controls.Add(spAbos)
+        tpAbos.Location = New Point(4, 24)
+        tpAbos.Name = "tpAbos"
+        tpAbos.Padding = New Padding(3)
+        tpAbos.Size = New Size(1291, 608)
+        tpAbos.TabIndex = 5
+        tpAbos.Text = "Abonnements"
+        tpAbos.UseVisualStyleBackColor = True
+        ' 
+        ' spAbos
+        ' 
+        spAbos.Dock = DockStyle.Fill
+        spAbos.IsSplitterFixed = True
+        spAbos.Location = New Point(3, 3)
+        spAbos.Name = "spAbos"
+        ' 
+        ' spAbos.Panel2
+        ' 
+        spAbos.Panel2.Controls.Add(dgvAbos)
+        spAbos.Size = New Size(1285, 602)
+        spAbos.SplitterDistance = 231
+        spAbos.TabIndex = 1
+        ' 
+        ' dgvAbos
+        ' 
+        dgvAbos.AllowUserToAddRows = False
+        dgvAbos.AllowUserToDeleteRows = False
+        DataGridViewCellStyle4.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvAbos.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle4
+        dgvAbos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+        dgvAbos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvAbos.Dock = DockStyle.Fill
+        dgvAbos.Location = New Point(0, 0)
+        dgvAbos.Name = "dgvAbos"
+        dgvAbos.Size = New Size(1050, 602)
+        dgvAbos.TabIndex = 0
+        ' 
+        ' tpNutzung
+        ' 
+        tpNutzung.Controls.Add(spNutzung)
+        tpNutzung.Location = New Point(4, 24)
+        tpNutzung.Name = "tpNutzung"
+        tpNutzung.Padding = New Padding(3)
+        tpNutzung.Size = New Size(1291, 608)
+        tpNutzung.TabIndex = 6
+        tpNutzung.Text = "Nutzung"
+        tpNutzung.UseVisualStyleBackColor = True
+        ' 
+        ' spNutzung
+        ' 
+        spNutzung.Dock = DockStyle.Fill
+        spNutzung.IsSplitterFixed = True
+        spNutzung.Location = New Point(3, 3)
+        spNutzung.Name = "spNutzung"
+        ' 
+        ' spNutzung.Panel1
+        ' 
+        spNutzung.Panel1.Controls.Add(Label9)
+        spNutzung.Panel1.Controls.Add(cbNutzGruppe)
+        spNutzung.Panel1.Controls.Add(Label10)
+        spNutzung.Panel1.Controls.Add(cbNutzTeam)
+        ' 
+        ' spNutzung.Panel2
+        ' 
+        spNutzung.Panel2.Controls.Add(dgvNutzung)
+        spNutzung.Size = New Size(1285, 602)
+        spNutzung.SplitterDistance = 231
+        spNutzung.TabIndex = 1
+        ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Location = New Point(5, 49)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(46, 15)
+        Label9.TabIndex = 7
+        Label9.Text = "Gruppe"
+        ' 
+        ' cbNutzGruppe
+        ' 
+        cbNutzGruppe.FormattingEnabled = True
+        cbNutzGruppe.Location = New Point(3, 67)
+        cbNutzGruppe.Name = "cbNutzGruppe"
+        cbNutzGruppe.Size = New Size(223, 23)
+        cbNutzGruppe.TabIndex = 6
+        ' 
+        ' Label10
+        ' 
+        Label10.AutoSize = True
+        Label10.Location = New Point(5, 0)
+        Label10.Name = "Label10"
+        Label10.Size = New Size(72, 15)
+        Label10.TabIndex = 5
+        Label10.Text = "Lizenz-Team"
+        ' 
+        ' cbNutzTeam
+        ' 
+        cbNutzTeam.FormattingEnabled = True
+        cbNutzTeam.Location = New Point(3, 18)
+        cbNutzTeam.Name = "cbNutzTeam"
+        cbNutzTeam.Size = New Size(223, 23)
+        cbNutzTeam.TabIndex = 4
+        ' 
+        ' dgvNutzung
+        ' 
+        dgvNutzung.AllowUserToAddRows = False
+        dgvNutzung.AllowUserToDeleteRows = False
+        DataGridViewCellStyle5.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvNutzung.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle5
+        dgvNutzung.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+        dgvNutzung.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvNutzung.Dock = DockStyle.Fill
+        dgvNutzung.Location = New Point(0, 0)
+        dgvNutzung.Name = "dgvNutzung"
+        dgvNutzung.Size = New Size(1050, 602)
+        dgvNutzung.TabIndex = 0
+        ' 
         ' frmBrowser
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1299, 636)
         Controls.Add(tabMain)
@@ -563,6 +707,18 @@ Partial Class frmBrowser
         CType(spLizenznutzung, ComponentModel.ISupportInitialize).EndInit()
         spLizenznutzung.ResumeLayout(False)
         CType(dgvLizenznutzung, ComponentModel.ISupportInitialize).EndInit()
+        tpAbos.ResumeLayout(False)
+        spAbos.Panel2.ResumeLayout(False)
+        CType(spAbos, ComponentModel.ISupportInitialize).EndInit()
+        spAbos.ResumeLayout(False)
+        CType(dgvAbos, ComponentModel.ISupportInitialize).EndInit()
+        tpNutzung.ResumeLayout(False)
+        spNutzung.Panel1.ResumeLayout(False)
+        spNutzung.Panel1.PerformLayout()
+        spNutzung.Panel2.ResumeLayout(False)
+        CType(spNutzung, ComponentModel.ISupportInitialize).EndInit()
+        spNutzung.ResumeLayout(False)
+        CType(dgvNutzung, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub
 
@@ -603,4 +759,14 @@ Partial Class frmBrowser
     Friend WithEvents Label6 As Label
     Friend WithEvents cbLizenzBenutzer As ComboBox
     Friend WithEvents dgvLizenznutzung As DataGridView
+    Friend WithEvents tpAbos As TabPage
+    Friend WithEvents tpNutzung As TabPage
+    Friend WithEvents spAbos As SplitContainer
+    Friend WithEvents dgvAbos As DataGridView
+    Friend WithEvents spNutzung As SplitContainer
+    Friend WithEvents Label9 As Label
+    Friend WithEvents cbNutzGruppe As ComboBox
+    Friend WithEvents Label10 As Label
+    Friend WithEvents cbNutzTeam As ComboBox
+    Friend WithEvents dgvNutzung As DataGridView
 End Class

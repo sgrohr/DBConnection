@@ -37,12 +37,12 @@ Partial Class frmFES
         tpForms = New TabPage()
         dgvForms = New DataGridView()
         tpControls = New TabPage()
-        tpValues = New TabPage()
-        tpButtons = New TabPage()
-        tpFunctions = New TabPage()
         dgvControls = New DataGridView()
+        tpValues = New TabPage()
         dgvValues = New DataGridView()
+        tpButtons = New TabPage()
         dgvButtons = New DataGridView()
+        tpFunctions = New TabPage()
         dgvFunctions = New DataGridView()
         tabFES.SuspendLayout()
         tpApps.SuspendLayout()
@@ -52,12 +52,12 @@ Partial Class frmFES
         tpForms.SuspendLayout()
         CType(dgvForms, ComponentModel.ISupportInitialize).BeginInit()
         tpControls.SuspendLayout()
-        tpValues.SuspendLayout()
-        tpButtons.SuspendLayout()
-        tpFunctions.SuspendLayout()
         CType(dgvControls, ComponentModel.ISupportInitialize).BeginInit()
+        tpValues.SuspendLayout()
         CType(dgvValues, ComponentModel.ISupportInitialize).BeginInit()
+        tpButtons.SuspendLayout()
         CType(dgvButtons, ComponentModel.ISupportInitialize).BeginInit()
+        tpFunctions.SuspendLayout()
         CType(dgvFunctions, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -156,39 +156,6 @@ Partial Class frmFES
         tpControls.Text = "Controls"
         tpControls.UseVisualStyleBackColor = True
         ' 
-        ' tpValues
-        ' 
-        tpValues.Controls.Add(dgvValues)
-        tpValues.Location = New Point(4, 24)
-        tpValues.Name = "tpValues"
-        tpValues.Padding = New Padding(3)
-        tpValues.Size = New Size(792, 422)
-        tpValues.TabIndex = 4
-        tpValues.Text = "Values"
-        tpValues.UseVisualStyleBackColor = True
-        ' 
-        ' tpButtons
-        ' 
-        tpButtons.Controls.Add(dgvButtons)
-        tpButtons.Location = New Point(4, 24)
-        tpButtons.Name = "tpButtons"
-        tpButtons.Padding = New Padding(3)
-        tpButtons.Size = New Size(792, 422)
-        tpButtons.TabIndex = 5
-        tpButtons.Text = "Buttons"
-        tpButtons.UseVisualStyleBackColor = True
-        ' 
-        ' tpFunctions
-        ' 
-        tpFunctions.Controls.Add(dgvFunctions)
-        tpFunctions.Location = New Point(4, 24)
-        tpFunctions.Name = "tpFunctions"
-        tpFunctions.Padding = New Padding(3)
-        tpFunctions.Size = New Size(792, 422)
-        tpFunctions.TabIndex = 6
-        tpFunctions.Text = "Functions"
-        tpFunctions.UseVisualStyleBackColor = True
-        ' 
         ' dgvControls
         ' 
         DataGridViewCellStyle4.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
@@ -200,6 +167,17 @@ Partial Class frmFES
         dgvControls.Name = "dgvControls"
         dgvControls.Size = New Size(786, 416)
         dgvControls.TabIndex = 1
+        ' 
+        ' tpValues
+        ' 
+        tpValues.Controls.Add(dgvValues)
+        tpValues.Location = New Point(4, 24)
+        tpValues.Name = "tpValues"
+        tpValues.Padding = New Padding(3)
+        tpValues.Size = New Size(792, 422)
+        tpValues.TabIndex = 4
+        tpValues.Text = "Values"
+        tpValues.UseVisualStyleBackColor = True
         ' 
         ' dgvValues
         ' 
@@ -213,6 +191,17 @@ Partial Class frmFES
         dgvValues.Size = New Size(786, 416)
         dgvValues.TabIndex = 1
         ' 
+        ' tpButtons
+        ' 
+        tpButtons.Controls.Add(dgvButtons)
+        tpButtons.Location = New Point(4, 24)
+        tpButtons.Name = "tpButtons"
+        tpButtons.Padding = New Padding(3)
+        tpButtons.Size = New Size(792, 422)
+        tpButtons.TabIndex = 5
+        tpButtons.Text = "Buttons"
+        tpButtons.UseVisualStyleBackColor = True
+        ' 
         ' dgvButtons
         ' 
         DataGridViewCellStyle6.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
@@ -224,6 +213,17 @@ Partial Class frmFES
         dgvButtons.Name = "dgvButtons"
         dgvButtons.Size = New Size(786, 416)
         dgvButtons.TabIndex = 1
+        ' 
+        ' tpFunctions
+        ' 
+        tpFunctions.Controls.Add(dgvFunctions)
+        tpFunctions.Location = New Point(4, 24)
+        tpFunctions.Name = "tpFunctions"
+        tpFunctions.Padding = New Padding(3)
+        tpFunctions.Size = New Size(792, 422)
+        tpFunctions.TabIndex = 6
+        tpFunctions.Text = "Functions"
+        tpFunctions.UseVisualStyleBackColor = True
         ' 
         ' dgvFunctions
         ' 
@@ -253,12 +253,12 @@ Partial Class frmFES
         tpForms.ResumeLayout(False)
         CType(dgvForms, ComponentModel.ISupportInitialize).EndInit()
         tpControls.ResumeLayout(False)
-        tpValues.ResumeLayout(False)
-        tpButtons.ResumeLayout(False)
-        tpFunctions.ResumeLayout(False)
         CType(dgvControls, ComponentModel.ISupportInitialize).EndInit()
+        tpValues.ResumeLayout(False)
         CType(dgvValues, ComponentModel.ISupportInitialize).EndInit()
+        tpButtons.ResumeLayout(False)
         CType(dgvButtons, ComponentModel.ISupportInitialize).EndInit()
+        tpFunctions.ResumeLayout(False)
         CType(dgvFunctions, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub
