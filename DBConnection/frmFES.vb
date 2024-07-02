@@ -19,26 +19,28 @@
         For Each dr As DataGridViewRow In dgvTabs.SelectedRows
             Dim pk As Integer = dr.Cells.Item(0).Value
             Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
-            Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select pk,name from ui1.fec_forms where tab_pk=" & pk & " order by pk asc")
+            Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select pk,name,button_pks::varchar from ui1.fec_forms where tab_pk=" & pk & " order by pk asc")
             dgvForms.DataSource = dt
             tabFES.SelectedTab = tpForms
         Next
     End Sub
 
     Private Sub dgvForms_SelectionChanged(sender As Object, e As EventArgs) Handles dgvForms.SelectionChanged
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
         For Each dr As DataGridViewRow In dgvForms.SelectedRows
             Dim pk As Integer = dr.Cells.Item(0).Value
-            Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
             Dim dt As DataTable = cmd.GetTableFromSelect("SYS", "select pk,label as Beschriftung, key as Aufruf, element as Parameter, " &
                                                          "default_value as Standardwert, required as Muss_Attribut from ui1.fec_controls where form_pk=" & pk & " order by pk asc")
             dgvControls.DataSource = dt
+            Dim srButton As String = dr.Cells.Item("button_pks").Value
+            srButton = Replace(srButton, "{", "")
+            srButton = Replace(srButton, "}", "")
+            Dim buttons As String() = Split(srButton, ",")
+            Dim dt1 As DataTable = cmd.GetTableFromSelect("SYS", "select * from ui1.fec_buttons where pk in(" & srButton & ")")
+            dgvButtons.DataSource = dt1
             tabFES.SelectedTab = tpControls
+
         Next
-    End Sub
-
-
-    Private Sub frmFES_Closed(sender As Object, e As EventArgs) Handles Me.Closed
-        Application.Exit()
     End Sub
 
     Private Sub dgvControls_SelectionChanged(sender As Object, e As EventArgs) Handles dgvControls.SelectionChanged
@@ -49,6 +51,9 @@
             dgvValues.DataSource = dt
             tabFES.SelectedTab = tpValues
         Next
+    End Sub
+    Private Sub frmFES_Closed(sender As Object, e As EventArgs) Handles Me.Closed
+        Application.Exit()
     End Sub
 
 End Class

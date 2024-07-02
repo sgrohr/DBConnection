@@ -512,24 +512,25 @@ Public Class frmBrowser
         Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
         If selectedTeam <> C_None Then
             If selectedGroup <> C_None Then
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where team_name='" & selectedTeam &
-                                                             "' and group_name='" & selectedGroup & "' order by group_name")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where team='" & selectedTeam &
+                                                             "' and gruppe='" & selectedGroup & "' order by gruppe")
                 dgvNutzung.DataSource = dt
                 Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             Else
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where team_name='" & selectedTeam & "' order by team_name")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where team='" & selectedTeam & "' order by team")
                 dgvNutzung.DataSource = dt
                 Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             End If
         Else
             If selectedGroup <> C_None Then
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where group_name='" & selectedGroup & "' order by group_name")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung where gruppe='" & selectedGroup & "' order by gruppe")
                 dgvNutzung.DataSource = dt
                 Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             Else
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung order by email")
-                dgvNutzung.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                dgvNutzung.DataSource = Nothing
+                'Dim dt = cmd.GetTableFromSelect("SYS", "select * from vnutzung order by email")
+                'dgvNutzung.DataSource = dt
+                'Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             End If
         End If
     End Sub

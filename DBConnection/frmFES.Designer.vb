@@ -92,7 +92,7 @@ Partial Class frmFES
         ' 
         DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvApps.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
-        dgvApps.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvApps.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvApps.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvApps.Dock = DockStyle.Fill
         dgvApps.Location = New Point(3, 3)
@@ -114,7 +114,7 @@ Partial Class frmFES
         ' 
         DataGridViewCellStyle2.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvTabs.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle2
-        dgvTabs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvTabs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvTabs.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvTabs.Dock = DockStyle.Fill
         dgvTabs.Location = New Point(3, 3)
@@ -137,7 +137,7 @@ Partial Class frmFES
         ' 
         DataGridViewCellStyle3.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvForms.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle3
-        dgvForms.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvForms.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvForms.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvForms.Dock = DockStyle.Fill
         dgvForms.Location = New Point(3, 3)
@@ -160,7 +160,7 @@ Partial Class frmFES
         ' 
         DataGridViewCellStyle4.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvControls.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle4
-        dgvControls.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvControls.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvControls.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvControls.Dock = DockStyle.Fill
         dgvControls.Location = New Point(3, 3)
@@ -183,7 +183,7 @@ Partial Class frmFES
         ' 
         DataGridViewCellStyle5.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvValues.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle5
-        dgvValues.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvValues.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvValues.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvValues.Dock = DockStyle.Fill
         dgvValues.Location = New Point(3, 3)
@@ -206,7 +206,7 @@ Partial Class frmFES
         ' 
         DataGridViewCellStyle6.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvButtons.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle6
-        dgvButtons.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvButtons.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvButtons.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvButtons.Dock = DockStyle.Fill
         dgvButtons.Location = New Point(3, 3)
@@ -229,7 +229,7 @@ Partial Class frmFES
         ' 
         DataGridViewCellStyle7.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
         dgvFunctions.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle7
-        dgvFunctions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgvFunctions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvFunctions.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvFunctions.Dock = DockStyle.Fill
         dgvFunctions.Location = New Point(3, 3)

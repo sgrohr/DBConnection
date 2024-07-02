@@ -13,6 +13,8 @@ Public Class login
     Private Const FESTestDB As String = "engsuitetest"
     Private Const FESTestUser As String = "engsuite_rohrs@engsuite-sql-test"
     Private Const FESTestPW As String = "Fas3_Zum5_Fyb3"
+    Private Const FESTestPWOwner As String = "r7e-7-Y-5BR+-EcTBE8S6_"
+    Private Const FESTestUserOwner As String = "e"
     Private Const FESProdServer As String = "engsuite-sql.postgres.database.azure.com"
     Private Const FESProdDB As String = "engsuite"
     Private Const FESProdPW As String = "1466aP8i03Mh2tu3So2iq5"
