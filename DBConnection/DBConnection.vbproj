@@ -27,8 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Bibliotheken\Basis\DB\DB.vbproj" />
-    <ProjectReference Include="..\..\..\Bibliotheken\Basis\FLPExcel\FLPExcel.vbproj" />
+    <ProjectReference Include="..\..\..\Bibliotheken\db\DB.vbproj" />
+    <ProjectReference Include="..\..\..\Bibliotheken\flpexcel\FLPExcel.vbproj" />
   </ItemGroup>
 
   <ItemGroup>
