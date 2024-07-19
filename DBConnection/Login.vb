@@ -35,6 +35,7 @@ Public Class login
         err = cn.OpenPostgreSQLDB(clsConnectionNames.SysCn, txtServer.Text, txtUser.Text, txtPasswort.Text, txtDatenbank.Text)
         If err.Fehlerklasse <> Georg.IGEOrgConnection.eConnectionError.NO_ERROR Then
             cn.RemoveAll() ' eigentlich remove(clsVersion.C_SYS)
+            Dim strErr As String = ""
             Select Case MsgBox(cn.GetErrorDescription(err.Fehlerklasse, err.Ausnahme.Message), MsgBoxStyle.Critical Or MsgBoxStyle.RetryCancel)
                 Case MsgBoxResult.Cancel
                     Close()

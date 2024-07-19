@@ -27,9 +27,13 @@ Partial Class frmBrowser
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle7 As DataGridViewCellStyle = New DataGridViewCellStyle()
         cmdSoftware = New Button()
         dgvInhalt = New DataGridView()
         spTabellen = New SplitContainer()
+        cbProzesse = New ComboBox()
+        Button1 = New Button()
         cmdDownload = New Button()
         cmdUpload = New Button()
         cmdConnectoren = New Button()
@@ -59,6 +63,14 @@ Partial Class frmBrowser
         dgvSubsriptions = New DataGridView()
         tpLizenznutzung = New TabPage()
         spLizenznutzung = New SplitContainer()
+        Label16 = New Label()
+        cbLizenzGruppe = New ComboBox()
+        Label15 = New Label()
+        cbLizenzZugriff = New ComboBox()
+        Label14 = New Label()
+        cbLizenzAbteilung = New ComboBox()
+        Label13 = New Label()
+        cbLizenzProdukt = New ComboBox()
         Label5 = New Label()
         cbLizenzMonat = New ComboBox()
         Label6 = New Label()
@@ -66,14 +78,28 @@ Partial Class frmBrowser
         dgvLizenznutzung = New DataGridView()
         tpAbos = New TabPage()
         spAbos = New SplitContainer()
+        Label12 = New Label()
+        cbAbosProdukt = New ComboBox()
         dgvAbos = New DataGridView()
         tpNutzung = New TabPage()
         spNutzung = New SplitContainer()
+        cmdBerichtAEC = New Button()
+        cmdBerichtToken = New Button()
+        Label11 = New Label()
+        cbNutzAccess = New ComboBox()
+        Label8 = New Label()
+        cbNutzMonat = New ComboBox()
+        Label7 = New Label()
+        cbNutzProdukt = New ComboBox()
         Label9 = New Label()
         cbNutzGruppe = New ComboBox()
         Label10 = New Label()
         cbNutzTeam = New ComboBox()
         dgvNutzung = New DataGridView()
+        tpAEC = New TabPage()
+        dgvAEC = New DataGridView()
+        tpToken = New TabPage()
+        dgvToken = New DataGridView()
         CType(dgvInhalt, ComponentModel.ISupportInitialize).BeginInit()
         CType(spTabellen, ComponentModel.ISupportInitialize).BeginInit()
         spTabellen.Panel1.SuspendLayout()
@@ -107,6 +133,7 @@ Partial Class frmBrowser
         CType(dgvLizenznutzung, ComponentModel.ISupportInitialize).BeginInit()
         tpAbos.SuspendLayout()
         CType(spAbos, ComponentModel.ISupportInitialize).BeginInit()
+        spAbos.Panel1.SuspendLayout()
         spAbos.Panel2.SuspendLayout()
         spAbos.SuspendLayout()
         CType(dgvAbos, ComponentModel.ISupportInitialize).BeginInit()
@@ -116,6 +143,10 @@ Partial Class frmBrowser
         spNutzung.Panel2.SuspendLayout()
         spNutzung.SuspendLayout()
         CType(dgvNutzung, ComponentModel.ISupportInitialize).BeginInit()
+        tpAEC.SuspendLayout()
+        CType(dgvAEC, ComponentModel.ISupportInitialize).BeginInit()
+        tpToken.SuspendLayout()
+        CType(dgvToken, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' cmdSoftware
@@ -150,6 +181,8 @@ Partial Class frmBrowser
         ' 
         ' spTabellen.Panel2
         ' 
+        spTabellen.Panel2.Controls.Add(cbProzesse)
+        spTabellen.Panel2.Controls.Add(Button1)
         spTabellen.Panel2.Controls.Add(cmdDownload)
         spTabellen.Panel2.Controls.Add(cmdUpload)
         spTabellen.Panel2.Controls.Add(cmdConnectoren)
@@ -157,6 +190,24 @@ Partial Class frmBrowser
         spTabellen.Size = New Size(1285, 602)
         spTabellen.SplitterDistance = 527
         spTabellen.TabIndex = 2
+        ' 
+        ' cbProzesse
+        ' 
+        cbProzesse.FormattingEnabled = True
+        cbProzesse.Location = New Point(135, 35)
+        cbProzesse.Name = "cbProzesse"
+        cbProzesse.Size = New Size(206, 23)
+        cbProzesse.TabIndex = 5
+        ' 
+        ' Button1
+        ' 
+        Button1.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        Button1.Location = New Point(5, 25)
+        Button1.Name = "Button1"
+        Button1.Size = New Size(115, 41)
+        Button1.TabIndex = 4
+        Button1.Text = "Prozesse"
+        Button1.UseVisualStyleBackColor = True
         ' 
         ' cmdDownload
         ' 
@@ -197,6 +248,8 @@ Partial Class frmBrowser
         tabMain.Controls.Add(tpLizenznutzung)
         tabMain.Controls.Add(tpAbos)
         tabMain.Controls.Add(tpNutzung)
+        tabMain.Controls.Add(tpAEC)
+        tabMain.Controls.Add(tpToken)
         tabMain.Dock = DockStyle.Fill
         tabMain.Location = New Point(0, 0)
         tabMain.Name = "tabMain"
@@ -479,12 +532,21 @@ Partial Class frmBrowser
         ' spLizenznutzung
         ' 
         spLizenznutzung.Dock = DockStyle.Fill
+        spLizenznutzung.FixedPanel = FixedPanel.Panel1
         spLizenznutzung.IsSplitterFixed = True
         spLizenznutzung.Location = New Point(3, 3)
         spLizenznutzung.Name = "spLizenznutzung"
         ' 
         ' spLizenznutzung.Panel1
         ' 
+        spLizenznutzung.Panel1.Controls.Add(Label16)
+        spLizenznutzung.Panel1.Controls.Add(cbLizenzGruppe)
+        spLizenznutzung.Panel1.Controls.Add(Label15)
+        spLizenznutzung.Panel1.Controls.Add(cbLizenzZugriff)
+        spLizenznutzung.Panel1.Controls.Add(Label14)
+        spLizenznutzung.Panel1.Controls.Add(cbLizenzAbteilung)
+        spLizenznutzung.Panel1.Controls.Add(Label13)
+        spLizenznutzung.Panel1.Controls.Add(cbLizenzProdukt)
         spLizenznutzung.Panel1.Controls.Add(Label5)
         spLizenznutzung.Panel1.Controls.Add(cbLizenzMonat)
         spLizenznutzung.Panel1.Controls.Add(Label6)
@@ -494,13 +556,81 @@ Partial Class frmBrowser
         ' 
         spLizenznutzung.Panel2.Controls.Add(dgvLizenznutzung)
         spLizenznutzung.Size = New Size(1285, 602)
-        spLizenznutzung.SplitterDistance = 228
+        spLizenznutzung.SplitterDistance = 235
         spLizenznutzung.TabIndex = 1
+        ' 
+        ' Label16
+        ' 
+        Label16.AutoSize = True
+        Label16.Location = New Point(0, 100)
+        Label16.Name = "Label16"
+        Label16.Size = New Size(46, 15)
+        Label16.TabIndex = 15
+        Label16.Text = "Gruppe"
+        ' 
+        ' cbLizenzGruppe
+        ' 
+        cbLizenzGruppe.FormattingEnabled = True
+        cbLizenzGruppe.Location = New Point(3, 118)
+        cbLizenzGruppe.Name = "cbLizenzGruppe"
+        cbLizenzGruppe.Size = New Size(223, 23)
+        cbLizenzGruppe.TabIndex = 14
+        ' 
+        ' Label15
+        ' 
+        Label15.AutoSize = True
+        Label15.Location = New Point(3, 241)
+        Label15.Name = "Label15"
+        Label15.Size = New Size(62, 15)
+        Label15.TabIndex = 13
+        Label15.Text = "Zugriffsart"
+        ' 
+        ' cbLizenzZugriff
+        ' 
+        cbLizenzZugriff.FormattingEnabled = True
+        cbLizenzZugriff.Location = New Point(3, 259)
+        cbLizenzZugriff.Name = "cbLizenzZugriff"
+        cbLizenzZugriff.Size = New Size(223, 23)
+        cbLizenzZugriff.TabIndex = 12
+        ' 
+        ' Label14
+        ' 
+        Label14.AutoSize = True
+        Label14.Location = New Point(0, 144)
+        Label14.Name = "Label14"
+        Label14.Size = New Size(59, 15)
+        Label14.TabIndex = 11
+        Label14.Text = "Abteilung"
+        ' 
+        ' cbLizenzAbteilung
+        ' 
+        cbLizenzAbteilung.FormattingEnabled = True
+        cbLizenzAbteilung.Location = New Point(3, 162)
+        cbLizenzAbteilung.Name = "cbLizenzAbteilung"
+        cbLizenzAbteilung.Size = New Size(223, 23)
+        cbLizenzAbteilung.TabIndex = 10
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Location = New Point(0, 192)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(49, 15)
+        Label13.TabIndex = 9
+        Label13.Text = "Produkt"
+        ' 
+        ' cbLizenzProdukt
+        ' 
+        cbLizenzProdukt.FormattingEnabled = True
+        cbLizenzProdukt.Location = New Point(3, 210)
+        cbLizenzProdukt.Name = "cbLizenzProdukt"
+        cbLizenzProdukt.Size = New Size(223, 23)
+        cbLizenzProdukt.TabIndex = 8
         ' 
         ' Label5
         ' 
         Label5.AutoSize = True
-        Label5.Location = New Point(5, 49)
+        Label5.Location = New Point(0, 49)
         Label5.Name = "Label5"
         Label5.Size = New Size(42, 15)
         Label5.TabIndex = 7
@@ -517,7 +647,7 @@ Partial Class frmBrowser
         ' Label6
         ' 
         Label6.AutoSize = True
-        Label6.Location = New Point(5, 0)
+        Label6.Location = New Point(3, 0)
         Label6.Name = "Label6"
         Label6.Size = New Size(53, 15)
         Label6.TabIndex = 5
@@ -542,7 +672,7 @@ Partial Class frmBrowser
         dgvLizenznutzung.Dock = DockStyle.Fill
         dgvLizenznutzung.Location = New Point(0, 0)
         dgvLizenznutzung.Name = "dgvLizenznutzung"
-        dgvLizenznutzung.Size = New Size(1053, 602)
+        dgvLizenznutzung.Size = New Size(1046, 602)
         dgvLizenznutzung.TabIndex = 0
         ' 
         ' tpAbos
@@ -563,12 +693,34 @@ Partial Class frmBrowser
         spAbos.Location = New Point(3, 3)
         spAbos.Name = "spAbos"
         ' 
+        ' spAbos.Panel1
+        ' 
+        spAbos.Panel1.Controls.Add(Label12)
+        spAbos.Panel1.Controls.Add(cbAbosProdukt)
+        ' 
         ' spAbos.Panel2
         ' 
         spAbos.Panel2.Controls.Add(dgvAbos)
         spAbos.Size = New Size(1285, 602)
         spAbos.SplitterDistance = 231
         spAbos.TabIndex = 1
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Location = New Point(8, 3)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(49, 15)
+        Label12.TabIndex = 11
+        Label12.Text = "Produkt"
+        ' 
+        ' cbAbosProdukt
+        ' 
+        cbAbosProdukt.FormattingEnabled = True
+        cbAbosProdukt.Location = New Point(6, 21)
+        cbAbosProdukt.Name = "cbAbosProdukt"
+        cbAbosProdukt.Size = New Size(223, 23)
+        cbAbosProdukt.TabIndex = 10
         ' 
         ' dgvAbos
         ' 
@@ -598,12 +750,21 @@ Partial Class frmBrowser
         ' spNutzung
         ' 
         spNutzung.Dock = DockStyle.Fill
+        spNutzung.FixedPanel = FixedPanel.Panel1
         spNutzung.IsSplitterFixed = True
         spNutzung.Location = New Point(3, 3)
         spNutzung.Name = "spNutzung"
         ' 
         ' spNutzung.Panel1
         ' 
+        spNutzung.Panel1.Controls.Add(cmdBerichtAEC)
+        spNutzung.Panel1.Controls.Add(cmdBerichtToken)
+        spNutzung.Panel1.Controls.Add(Label11)
+        spNutzung.Panel1.Controls.Add(cbNutzAccess)
+        spNutzung.Panel1.Controls.Add(Label8)
+        spNutzung.Panel1.Controls.Add(cbNutzMonat)
+        spNutzung.Panel1.Controls.Add(Label7)
+        spNutzung.Panel1.Controls.Add(cbNutzProdukt)
         spNutzung.Panel1.Controls.Add(Label9)
         spNutzung.Panel1.Controls.Add(cbNutzGruppe)
         spNutzung.Panel1.Controls.Add(Label10)
@@ -616,10 +777,81 @@ Partial Class frmBrowser
         spNutzung.SplitterDistance = 231
         spNutzung.TabIndex = 1
         ' 
+        ' cmdBerichtAEC
+        ' 
+        cmdBerichtAEC.Enabled = False
+        cmdBerichtAEC.Location = New Point(5, 260)
+        cmdBerichtAEC.Name = "cmdBerichtAEC"
+        cmdBerichtAEC.Size = New Size(221, 23)
+        cmdBerichtAEC.TabIndex = 15
+        cmdBerichtAEC.Text = "Monatsbericht AEC"
+        cmdBerichtAEC.UseVisualStyleBackColor = True
+        ' 
+        ' cmdBerichtToken
+        ' 
+        cmdBerichtToken.Enabled = False
+        cmdBerichtToken.Location = New Point(5, 231)
+        cmdBerichtToken.Name = "cmdBerichtToken"
+        cmdBerichtToken.Size = New Size(221, 23)
+        cmdBerichtToken.TabIndex = 14
+        cmdBerichtToken.Text = "Monatsbericht Flex Token"
+        cmdBerichtToken.UseVisualStyleBackColor = True
+        ' 
+        ' Label11
+        ' 
+        Label11.AutoSize = True
+        Label11.Location = New Point(5, 172)
+        Label11.Name = "Label11"
+        Label11.Size = New Size(43, 15)
+        Label11.TabIndex = 13
+        Label11.Text = "Zugriff"
+        ' 
+        ' cbNutzAccess
+        ' 
+        cbNutzAccess.FormattingEnabled = True
+        cbNutzAccess.Location = New Point(3, 190)
+        cbNutzAccess.Name = "cbNutzAccess"
+        cbNutzAccess.Size = New Size(223, 23)
+        cbNutzAccess.TabIndex = 12
+        ' 
+        ' Label8
+        ' 
+        Label8.AutoSize = True
+        Label8.Location = New Point(5, 129)
+        Label8.Name = "Label8"
+        Label8.Size = New Size(42, 15)
+        Label8.TabIndex = 11
+        Label8.Text = "Monat"
+        ' 
+        ' cbNutzMonat
+        ' 
+        cbNutzMonat.FormattingEnabled = True
+        cbNutzMonat.Location = New Point(3, 147)
+        cbNutzMonat.Name = "cbNutzMonat"
+        cbNutzMonat.Size = New Size(223, 23)
+        cbNutzMonat.TabIndex = 10
+        ' 
+        ' Label7
+        ' 
+        Label7.AutoSize = True
+        Label7.Location = New Point(5, 86)
+        Label7.Name = "Label7"
+        Label7.Size = New Size(49, 15)
+        Label7.TabIndex = 9
+        Label7.Text = "Produkt"
+        ' 
+        ' cbNutzProdukt
+        ' 
+        cbNutzProdukt.FormattingEnabled = True
+        cbNutzProdukt.Location = New Point(3, 104)
+        cbNutzProdukt.Name = "cbNutzProdukt"
+        cbNutzProdukt.Size = New Size(223, 23)
+        cbNutzProdukt.TabIndex = 8
+        ' 
         ' Label9
         ' 
         Label9.AutoSize = True
-        Label9.Location = New Point(5, 49)
+        Label9.Location = New Point(5, 43)
         Label9.Name = "Label9"
         Label9.Size = New Size(46, 15)
         Label9.TabIndex = 7
@@ -628,7 +860,7 @@ Partial Class frmBrowser
         ' cbNutzGruppe
         ' 
         cbNutzGruppe.FormattingEnabled = True
-        cbNutzGruppe.Location = New Point(3, 67)
+        cbNutzGruppe.Location = New Point(3, 61)
         cbNutzGruppe.Name = "cbNutzGruppe"
         cbNutzGruppe.Size = New Size(223, 23)
         cbNutzGruppe.TabIndex = 6
@@ -663,6 +895,56 @@ Partial Class frmBrowser
         dgvNutzung.Name = "dgvNutzung"
         dgvNutzung.Size = New Size(1050, 602)
         dgvNutzung.TabIndex = 0
+        ' 
+        ' tpAEC
+        ' 
+        tpAEC.Controls.Add(dgvAEC)
+        tpAEC.Location = New Point(4, 24)
+        tpAEC.Name = "tpAEC"
+        tpAEC.Padding = New Padding(3)
+        tpAEC.Size = New Size(1291, 608)
+        tpAEC.TabIndex = 7
+        tpAEC.Text = "AEC Bericht"
+        tpAEC.UseVisualStyleBackColor = True
+        ' 
+        ' dgvAEC
+        ' 
+        dgvAEC.AllowUserToAddRows = False
+        dgvAEC.AllowUserToDeleteRows = False
+        DataGridViewCellStyle6.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvAEC.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle6
+        dgvAEC.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+        dgvAEC.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvAEC.Dock = DockStyle.Fill
+        dgvAEC.Location = New Point(3, 3)
+        dgvAEC.Name = "dgvAEC"
+        dgvAEC.Size = New Size(1285, 602)
+        dgvAEC.TabIndex = 1
+        ' 
+        ' tpToken
+        ' 
+        tpToken.Controls.Add(dgvToken)
+        tpToken.Location = New Point(4, 24)
+        tpToken.Name = "tpToken"
+        tpToken.Padding = New Padding(3)
+        tpToken.Size = New Size(1291, 608)
+        tpToken.TabIndex = 8
+        tpToken.Text = "Token Bericht"
+        tpToken.UseVisualStyleBackColor = True
+        ' 
+        ' dgvToken
+        ' 
+        dgvToken.AllowUserToAddRows = False
+        dgvToken.AllowUserToDeleteRows = False
+        DataGridViewCellStyle7.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvToken.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle7
+        dgvToken.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+        dgvToken.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvToken.Dock = DockStyle.Fill
+        dgvToken.Location = New Point(3, 3)
+        dgvToken.Name = "dgvToken"
+        dgvToken.Size = New Size(1285, 602)
+        dgvToken.TabIndex = 1
         ' 
         ' frmBrowser
         ' 
@@ -708,6 +990,8 @@ Partial Class frmBrowser
         spLizenznutzung.ResumeLayout(False)
         CType(dgvLizenznutzung, ComponentModel.ISupportInitialize).EndInit()
         tpAbos.ResumeLayout(False)
+        spAbos.Panel1.ResumeLayout(False)
+        spAbos.Panel1.PerformLayout()
         spAbos.Panel2.ResumeLayout(False)
         CType(spAbos, ComponentModel.ISupportInitialize).EndInit()
         spAbos.ResumeLayout(False)
@@ -719,6 +1003,10 @@ Partial Class frmBrowser
         CType(spNutzung, ComponentModel.ISupportInitialize).EndInit()
         spNutzung.ResumeLayout(False)
         CType(dgvNutzung, ComponentModel.ISupportInitialize).EndInit()
+        tpAEC.ResumeLayout(False)
+        CType(dgvAEC, ComponentModel.ISupportInitialize).EndInit()
+        tpToken.ResumeLayout(False)
+        CType(dgvToken, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub
 
@@ -769,4 +1057,28 @@ Partial Class frmBrowser
     Friend WithEvents Label10 As Label
     Friend WithEvents cbNutzTeam As ComboBox
     Friend WithEvents dgvNutzung As DataGridView
+    Friend WithEvents Label8 As Label
+    Friend WithEvents cbNutzMonat As ComboBox
+    Friend WithEvents Label7 As Label
+    Friend WithEvents cbNutzProdukt As ComboBox
+    Friend WithEvents Label11 As Label
+    Friend WithEvents cbNutzAccess As ComboBox
+    Friend WithEvents cbProzesse As ComboBox
+    Friend WithEvents Button1 As Button
+    Friend WithEvents cmdBerichtAEC As Button
+    Friend WithEvents cmdBerichtToken As Button
+    Friend WithEvents tpAEC As TabPage
+    Friend WithEvents tpToken As TabPage
+    Friend WithEvents dgvAEC As DataGridView
+    Friend WithEvents dgvToken As DataGridView
+    Friend WithEvents Label12 As Label
+    Friend WithEvents cbAbosProdukt As ComboBox
+    Friend WithEvents Label15 As Label
+    Friend WithEvents cbLizenzZugriff As ComboBox
+    Friend WithEvents Label14 As Label
+    Friend WithEvents cbLizenzAbteilung As ComboBox
+    Friend WithEvents Label13 As Label
+    Friend WithEvents cbLizenzProdukt As ComboBox
+    Friend WithEvents Label16 As Label
+    Friend WithEvents cbLizenzGruppe As ComboBox
 End Class
