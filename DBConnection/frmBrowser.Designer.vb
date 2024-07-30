@@ -22,13 +22,13 @@ Partial Class frmBrowser
     'Das Bearbeiten mit dem Code-Editor ist nicht möglich.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle6 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle7 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle8 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle9 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle10 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle11 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle12 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle13 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle14 As DataGridViewCellStyle = New DataGridViewCellStyle()
         cmdSoftware = New Button()
         dgvInhalt = New DataGridView()
         spTabellen = New SplitContainer()
@@ -49,6 +49,9 @@ Partial Class frmBrowser
         dgExcelcontent = New DataGridView()
         tpBenutzer = New TabPage()
         spBenutzer = New SplitContainer()
+        cbxGastUser = New CheckBox()
+        Label17 = New Label()
+        cbUserRolle = New ComboBox()
         Label2 = New Label()
         cbUserGruppe = New ComboBox()
         Label1 = New Label()
@@ -63,6 +66,10 @@ Partial Class frmBrowser
         dgvSubsriptions = New DataGridView()
         tpLizenznutzung = New TabPage()
         spLizenznutzung = New SplitContainer()
+        cmdGesamtAEC = New Button()
+        cmdGesamtToken = New Button()
+        cmdNutzungAEC = New Button()
+        cmdNutzungFlex = New Button()
         Label16 = New Label()
         cbLizenzGruppe = New ComboBox()
         Label15 = New Label()
@@ -100,6 +107,13 @@ Partial Class frmBrowser
         dgvAEC = New DataGridView()
         tpToken = New TabPage()
         dgvToken = New DataGridView()
+        MainMenu = New MenuStrip()
+        ToolStripMenuItem1 = New ToolStripMenuItem()
+        BeendenToolStripMenuItem = New ToolStripMenuItem()
+        BearbeitenToolStripMenuItem = New ToolStripMenuItem()
+        ExportToolStripMenuItem = New ToolStripMenuItem()
+        TokennutzungToolStripMenuItem = New ToolStripMenuItem()
+        LizenznutzungToolStripMenuItem = New ToolStripMenuItem()
         CType(dgvInhalt, ComponentModel.ISupportInitialize).BeginInit()
         CType(spTabellen, ComponentModel.ISupportInitialize).BeginInit()
         spTabellen.Panel1.SuspendLayout()
@@ -147,12 +161,13 @@ Partial Class frmBrowser
         CType(dgvAEC, ComponentModel.ISupportInitialize).BeginInit()
         tpToken.SuspendLayout()
         CType(dgvToken, ComponentModel.ISupportInitialize).BeginInit()
+        MainMenu.SuspendLayout()
         SuspendLayout()
         ' 
         ' cmdSoftware
         ' 
         cmdSoftware.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        cmdSoftware.Location = New Point(1165, 25)
+        cmdSoftware.Location = New Point(1165, 23)
         cmdSoftware.Name = "cmdSoftware"
         cmdSoftware.Size = New Size(115, 41)
         cmdSoftware.TabIndex = 0
@@ -165,7 +180,7 @@ Partial Class frmBrowser
         dgvInhalt.Dock = DockStyle.Fill
         dgvInhalt.Location = New Point(0, 0)
         dgvInhalt.Name = "dgvInhalt"
-        dgvInhalt.Size = New Size(1285, 527)
+        dgvInhalt.Size = New Size(1285, 505)
         dgvInhalt.TabIndex = 1
         ' 
         ' spTabellen
@@ -187,8 +202,8 @@ Partial Class frmBrowser
         spTabellen.Panel2.Controls.Add(cmdUpload)
         spTabellen.Panel2.Controls.Add(cmdConnectoren)
         spTabellen.Panel2.Controls.Add(cmdSoftware)
-        spTabellen.Size = New Size(1285, 602)
-        spTabellen.SplitterDistance = 527
+        spTabellen.Size = New Size(1285, 578)
+        spTabellen.SplitterDistance = 505
         spTabellen.TabIndex = 2
         ' 
         ' cbProzesse
@@ -202,7 +217,7 @@ Partial Class frmBrowser
         ' Button1
         ' 
         Button1.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        Button1.Location = New Point(5, 25)
+        Button1.Location = New Point(5, 23)
         Button1.Name = "Button1"
         Button1.Size = New Size(115, 41)
         Button1.TabIndex = 4
@@ -212,7 +227,7 @@ Partial Class frmBrowser
         ' cmdDownload
         ' 
         cmdDownload.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        cmdDownload.Location = New Point(555, 25)
+        cmdDownload.Location = New Point(555, 23)
         cmdDownload.Name = "cmdDownload"
         cmdDownload.Size = New Size(115, 41)
         cmdDownload.TabIndex = 3
@@ -222,7 +237,7 @@ Partial Class frmBrowser
         ' cmdUpload
         ' 
         cmdUpload.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        cmdUpload.Location = New Point(434, 25)
+        cmdUpload.Location = New Point(434, 23)
         cmdUpload.Name = "cmdUpload"
         cmdUpload.Size = New Size(115, 41)
         cmdUpload.TabIndex = 2
@@ -232,7 +247,7 @@ Partial Class frmBrowser
         ' cmdConnectoren
         ' 
         cmdConnectoren.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        cmdConnectoren.Location = New Point(1044, 25)
+        cmdConnectoren.Location = New Point(1044, 23)
         cmdConnectoren.Name = "cmdConnectoren"
         cmdConnectoren.Size = New Size(115, 41)
         cmdConnectoren.TabIndex = 1
@@ -251,10 +266,10 @@ Partial Class frmBrowser
         tabMain.Controls.Add(tpAEC)
         tabMain.Controls.Add(tpToken)
         tabMain.Dock = DockStyle.Fill
-        tabMain.Location = New Point(0, 0)
+        tabMain.Location = New Point(0, 24)
         tabMain.Name = "tabMain"
         tabMain.SelectedIndex = 0
-        tabMain.Size = New Size(1299, 636)
+        tabMain.Size = New Size(1299, 612)
         tabMain.TabIndex = 3
         ' 
         ' TabTabellen
@@ -263,7 +278,7 @@ Partial Class frmBrowser
         TabTabellen.Location = New Point(4, 24)
         TabTabellen.Name = "TabTabellen"
         TabTabellen.Padding = New Padding(3)
-        TabTabellen.Size = New Size(1291, 608)
+        TabTabellen.Size = New Size(1291, 584)
         TabTabellen.TabIndex = 0
         TabTabellen.Text = "Tabellen"
         TabTabellen.UseVisualStyleBackColor = True
@@ -274,7 +289,7 @@ Partial Class frmBrowser
         TpImport.Location = New Point(4, 24)
         TpImport.Name = "TpImport"
         TpImport.Padding = New Padding(3)
-        TpImport.Size = New Size(1291, 608)
+        TpImport.Size = New Size(1291, 584)
         TpImport.TabIndex = 1
         TpImport.Text = "Import"
         TpImport.UseVisualStyleBackColor = True
@@ -297,8 +312,8 @@ Partial Class frmBrowser
         ' spImport.Panel2
         ' 
         spImport.Panel2.Controls.Add(dgExcelcontent)
-        spImport.Size = New Size(1285, 602)
-        spImport.SplitterDistance = 84
+        spImport.Size = New Size(1285, 578)
+        spImport.SplitterDistance = 80
         spImport.TabIndex = 4
         ' 
         ' cbUeberführen
@@ -355,7 +370,7 @@ Partial Class frmBrowser
         dgExcelcontent.Dock = DockStyle.Fill
         dgExcelcontent.Location = New Point(0, 0)
         dgExcelcontent.Name = "dgExcelcontent"
-        dgExcelcontent.Size = New Size(1285, 514)
+        dgExcelcontent.Size = New Size(1285, 494)
         dgExcelcontent.TabIndex = 0
         ' 
         ' tpBenutzer
@@ -364,7 +379,7 @@ Partial Class frmBrowser
         tpBenutzer.Location = New Point(4, 24)
         tpBenutzer.Name = "tpBenutzer"
         tpBenutzer.Padding = New Padding(3)
-        tpBenutzer.Size = New Size(1291, 608)
+        tpBenutzer.Size = New Size(1291, 584)
         tpBenutzer.TabIndex = 2
         tpBenutzer.Text = "Benutzer"
         tpBenutzer.UseVisualStyleBackColor = True
@@ -378,6 +393,9 @@ Partial Class frmBrowser
         ' 
         ' spBenutzer.Panel1
         ' 
+        spBenutzer.Panel1.Controls.Add(cbxGastUser)
+        spBenutzer.Panel1.Controls.Add(Label17)
+        spBenutzer.Panel1.Controls.Add(cbUserRolle)
         spBenutzer.Panel1.Controls.Add(Label2)
         spBenutzer.Panel1.Controls.Add(cbUserGruppe)
         spBenutzer.Panel1.Controls.Add(Label1)
@@ -386,9 +404,36 @@ Partial Class frmBrowser
         ' spBenutzer.Panel2
         ' 
         spBenutzer.Panel2.Controls.Add(dgvBenutzer)
-        spBenutzer.Size = New Size(1285, 602)
+        spBenutzer.Size = New Size(1285, 578)
         spBenutzer.SplitterDistance = 231
         spBenutzer.TabIndex = 0
+        ' 
+        ' cbxGastUser
+        ' 
+        cbxGastUser.AutoSize = True
+        cbxGastUser.Location = New Point(3, 159)
+        cbxGastUser.Name = "cbxGastUser"
+        cbxGastUser.Size = New Size(145, 19)
+        cbxGastUser.TabIndex = 10
+        cbxGastUser.Text = "Gastbenutzer anzeigen"
+        cbxGastUser.UseVisualStyleBackColor = True
+        ' 
+        ' Label17
+        ' 
+        Label17.AutoSize = True
+        Label17.Location = New Point(5, 100)
+        Label17.Name = "Label17"
+        Label17.Size = New Size(33, 15)
+        Label17.TabIndex = 9
+        Label17.Text = "Rolle"
+        ' 
+        ' cbUserRolle
+        ' 
+        cbUserRolle.FormattingEnabled = True
+        cbUserRolle.Location = New Point(3, 118)
+        cbUserRolle.Name = "cbUserRolle"
+        cbUserRolle.Size = New Size(223, 23)
+        cbUserRolle.TabIndex = 8
         ' 
         ' Label2
         ' 
@@ -428,14 +473,14 @@ Partial Class frmBrowser
         ' 
         dgvBenutzer.AllowUserToAddRows = False
         dgvBenutzer.AllowUserToDeleteRows = False
-        DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
-        dgvBenutzer.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle8.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvBenutzer.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle8
         dgvBenutzer.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvBenutzer.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvBenutzer.Dock = DockStyle.Fill
         dgvBenutzer.Location = New Point(0, 0)
         dgvBenutzer.Name = "dgvBenutzer"
-        dgvBenutzer.Size = New Size(1050, 602)
+        dgvBenutzer.Size = New Size(1050, 578)
         dgvBenutzer.TabIndex = 0
         ' 
         ' tpSubscritions
@@ -444,7 +489,7 @@ Partial Class frmBrowser
         tpSubscritions.Location = New Point(4, 24)
         tpSubscritions.Name = "tpSubscritions"
         tpSubscritions.Padding = New Padding(3)
-        tpSubscritions.Size = New Size(1291, 608)
+        tpSubscritions.Size = New Size(1291, 584)
         tpSubscritions.TabIndex = 3
         tpSubscritions.Text = "Subscriptions"
         tpSubscritions.UseVisualStyleBackColor = True
@@ -466,7 +511,7 @@ Partial Class frmBrowser
         ' spSubsriptions.Panel2
         ' 
         spSubsriptions.Panel2.Controls.Add(dgvSubsriptions)
-        spSubsriptions.Size = New Size(1285, 602)
+        spSubsriptions.Size = New Size(1285, 578)
         spSubsriptions.SplitterDistance = 228
         spSubsriptions.TabIndex = 1
         ' 
@@ -508,14 +553,14 @@ Partial Class frmBrowser
         ' 
         dgvSubsriptions.AllowUserToAddRows = False
         dgvSubsriptions.AllowUserToDeleteRows = False
-        DataGridViewCellStyle2.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
-        dgvSubsriptions.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle9.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvSubsriptions.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle9
         dgvSubsriptions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvSubsriptions.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvSubsriptions.Dock = DockStyle.Fill
         dgvSubsriptions.Location = New Point(0, 0)
         dgvSubsriptions.Name = "dgvSubsriptions"
-        dgvSubsriptions.Size = New Size(1053, 602)
+        dgvSubsriptions.Size = New Size(1053, 578)
         dgvSubsriptions.TabIndex = 0
         ' 
         ' tpLizenznutzung
@@ -524,7 +569,7 @@ Partial Class frmBrowser
         tpLizenznutzung.Location = New Point(4, 24)
         tpLizenznutzung.Name = "tpLizenznutzung"
         tpLizenznutzung.Padding = New Padding(3)
-        tpLizenznutzung.Size = New Size(1291, 608)
+        tpLizenznutzung.Size = New Size(1291, 584)
         tpLizenznutzung.TabIndex = 4
         tpLizenznutzung.Text = "Lizenznutzung"
         tpLizenznutzung.UseVisualStyleBackColor = True
@@ -539,6 +584,10 @@ Partial Class frmBrowser
         ' 
         ' spLizenznutzung.Panel1
         ' 
+        spLizenznutzung.Panel1.Controls.Add(cmdGesamtAEC)
+        spLizenznutzung.Panel1.Controls.Add(cmdGesamtToken)
+        spLizenznutzung.Panel1.Controls.Add(cmdNutzungAEC)
+        spLizenznutzung.Panel1.Controls.Add(cmdNutzungFlex)
         spLizenznutzung.Panel1.Controls.Add(Label16)
         spLizenznutzung.Panel1.Controls.Add(cbLizenzGruppe)
         spLizenznutzung.Panel1.Controls.Add(Label15)
@@ -555,9 +604,47 @@ Partial Class frmBrowser
         ' spLizenznutzung.Panel2
         ' 
         spLizenznutzung.Panel2.Controls.Add(dgvLizenznutzung)
-        spLizenznutzung.Size = New Size(1285, 602)
+        spLizenznutzung.Size = New Size(1285, 578)
         spLizenznutzung.SplitterDistance = 235
         spLizenznutzung.TabIndex = 1
+        ' 
+        ' cmdGesamtAEC
+        ' 
+        cmdGesamtAEC.Location = New Point(3, 399)
+        cmdGesamtAEC.Name = "cmdGesamtAEC"
+        cmdGesamtAEC.Size = New Size(223, 23)
+        cmdGesamtAEC.TabIndex = 19
+        cmdGesamtAEC.Text = "Gesamtbericht AEC"
+        cmdGesamtAEC.UseVisualStyleBackColor = True
+        ' 
+        ' cmdGesamtToken
+        ' 
+        cmdGesamtToken.Location = New Point(3, 370)
+        cmdGesamtToken.Name = "cmdGesamtToken"
+        cmdGesamtToken.Size = New Size(223, 23)
+        cmdGesamtToken.TabIndex = 18
+        cmdGesamtToken.Text = "Gesamtbericht Token"
+        cmdGesamtToken.UseVisualStyleBackColor = True
+        ' 
+        ' cmdNutzungAEC
+        ' 
+        cmdNutzungAEC.Enabled = False
+        cmdNutzungAEC.Location = New Point(3, 341)
+        cmdNutzungAEC.Name = "cmdNutzungAEC"
+        cmdNutzungAEC.Size = New Size(223, 23)
+        cmdNutzungAEC.TabIndex = 17
+        cmdNutzungAEC.Text = "Monatsbericht AEC"
+        cmdNutzungAEC.UseVisualStyleBackColor = True
+        ' 
+        ' cmdNutzungFlex
+        ' 
+        cmdNutzungFlex.Enabled = False
+        cmdNutzungFlex.Location = New Point(3, 312)
+        cmdNutzungFlex.Name = "cmdNutzungFlex"
+        cmdNutzungFlex.Size = New Size(223, 23)
+        cmdNutzungFlex.TabIndex = 16
+        cmdNutzungFlex.Text = "Monatsbericht Flex Token"
+        cmdNutzungFlex.UseVisualStyleBackColor = True
         ' 
         ' Label16
         ' 
@@ -665,14 +752,14 @@ Partial Class frmBrowser
         ' 
         dgvLizenznutzung.AllowUserToAddRows = False
         dgvLizenznutzung.AllowUserToDeleteRows = False
-        DataGridViewCellStyle3.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
-        dgvLizenznutzung.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle10.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvLizenznutzung.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle10
         dgvLizenznutzung.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvLizenznutzung.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvLizenznutzung.Dock = DockStyle.Fill
         dgvLizenznutzung.Location = New Point(0, 0)
         dgvLizenznutzung.Name = "dgvLizenznutzung"
-        dgvLizenznutzung.Size = New Size(1046, 602)
+        dgvLizenznutzung.Size = New Size(1046, 578)
         dgvLizenznutzung.TabIndex = 0
         ' 
         ' tpAbos
@@ -681,7 +768,7 @@ Partial Class frmBrowser
         tpAbos.Location = New Point(4, 24)
         tpAbos.Name = "tpAbos"
         tpAbos.Padding = New Padding(3)
-        tpAbos.Size = New Size(1291, 608)
+        tpAbos.Size = New Size(1291, 584)
         tpAbos.TabIndex = 5
         tpAbos.Text = "Abonnements"
         tpAbos.UseVisualStyleBackColor = True
@@ -701,7 +788,7 @@ Partial Class frmBrowser
         ' spAbos.Panel2
         ' 
         spAbos.Panel2.Controls.Add(dgvAbos)
-        spAbos.Size = New Size(1285, 602)
+        spAbos.Size = New Size(1285, 578)
         spAbos.SplitterDistance = 231
         spAbos.TabIndex = 1
         ' 
@@ -726,14 +813,14 @@ Partial Class frmBrowser
         ' 
         dgvAbos.AllowUserToAddRows = False
         dgvAbos.AllowUserToDeleteRows = False
-        DataGridViewCellStyle4.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
-        dgvAbos.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle11.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvAbos.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle11
         dgvAbos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvAbos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvAbos.Dock = DockStyle.Fill
         dgvAbos.Location = New Point(0, 0)
         dgvAbos.Name = "dgvAbos"
-        dgvAbos.Size = New Size(1050, 602)
+        dgvAbos.Size = New Size(1050, 578)
         dgvAbos.TabIndex = 0
         ' 
         ' tpNutzung
@@ -742,7 +829,7 @@ Partial Class frmBrowser
         tpNutzung.Location = New Point(4, 24)
         tpNutzung.Name = "tpNutzung"
         tpNutzung.Padding = New Padding(3)
-        tpNutzung.Size = New Size(1291, 608)
+        tpNutzung.Size = New Size(1291, 584)
         tpNutzung.TabIndex = 6
         tpNutzung.Text = "Nutzung"
         tpNutzung.UseVisualStyleBackColor = True
@@ -773,7 +860,7 @@ Partial Class frmBrowser
         ' spNutzung.Panel2
         ' 
         spNutzung.Panel2.Controls.Add(dgvNutzung)
-        spNutzung.Size = New Size(1285, 602)
+        spNutzung.Size = New Size(1285, 578)
         spNutzung.SplitterDistance = 231
         spNutzung.TabIndex = 1
         ' 
@@ -886,14 +973,14 @@ Partial Class frmBrowser
         ' 
         dgvNutzung.AllowUserToAddRows = False
         dgvNutzung.AllowUserToDeleteRows = False
-        DataGridViewCellStyle5.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
-        dgvNutzung.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle5
+        DataGridViewCellStyle12.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvNutzung.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle12
         dgvNutzung.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvNutzung.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvNutzung.Dock = DockStyle.Fill
         dgvNutzung.Location = New Point(0, 0)
         dgvNutzung.Name = "dgvNutzung"
-        dgvNutzung.Size = New Size(1050, 602)
+        dgvNutzung.Size = New Size(1050, 578)
         dgvNutzung.TabIndex = 0
         ' 
         ' tpAEC
@@ -902,7 +989,7 @@ Partial Class frmBrowser
         tpAEC.Location = New Point(4, 24)
         tpAEC.Name = "tpAEC"
         tpAEC.Padding = New Padding(3)
-        tpAEC.Size = New Size(1291, 608)
+        tpAEC.Size = New Size(1291, 584)
         tpAEC.TabIndex = 7
         tpAEC.Text = "AEC Bericht"
         tpAEC.UseVisualStyleBackColor = True
@@ -911,14 +998,14 @@ Partial Class frmBrowser
         ' 
         dgvAEC.AllowUserToAddRows = False
         dgvAEC.AllowUserToDeleteRows = False
-        DataGridViewCellStyle6.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
-        dgvAEC.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle6
+        DataGridViewCellStyle13.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvAEC.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle13
         dgvAEC.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvAEC.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvAEC.Dock = DockStyle.Fill
         dgvAEC.Location = New Point(3, 3)
         dgvAEC.Name = "dgvAEC"
-        dgvAEC.Size = New Size(1285, 602)
+        dgvAEC.Size = New Size(1285, 578)
         dgvAEC.TabIndex = 1
         ' 
         ' tpToken
@@ -927,7 +1014,7 @@ Partial Class frmBrowser
         tpToken.Location = New Point(4, 24)
         tpToken.Name = "tpToken"
         tpToken.Padding = New Padding(3)
-        tpToken.Size = New Size(1291, 608)
+        tpToken.Size = New Size(1291, 584)
         tpToken.TabIndex = 8
         tpToken.Text = "Token Bericht"
         tpToken.UseVisualStyleBackColor = True
@@ -936,15 +1023,63 @@ Partial Class frmBrowser
         ' 
         dgvToken.AllowUserToAddRows = False
         dgvToken.AllowUserToDeleteRows = False
-        DataGridViewCellStyle7.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
-        dgvToken.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle7
+        DataGridViewCellStyle14.BackColor = Color.FromArgb(CByte(224), CByte(224), CByte(224))
+        dgvToken.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle14
         dgvToken.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         dgvToken.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvToken.Dock = DockStyle.Fill
         dgvToken.Location = New Point(3, 3)
         dgvToken.Name = "dgvToken"
-        dgvToken.Size = New Size(1285, 602)
+        dgvToken.Size = New Size(1285, 578)
         dgvToken.TabIndex = 1
+        ' 
+        ' MainMenu
+        ' 
+        MainMenu.Items.AddRange(New ToolStripItem() {ToolStripMenuItem1, BearbeitenToolStripMenuItem})
+        MainMenu.Location = New Point(0, 0)
+        MainMenu.Name = "MainMenu"
+        MainMenu.Size = New Size(1299, 24)
+        MainMenu.TabIndex = 4
+        MainMenu.Text = "MenuStrip1"
+        ' 
+        ' ToolStripMenuItem1
+        ' 
+        ToolStripMenuItem1.DropDownItems.AddRange(New ToolStripItem() {BeendenToolStripMenuItem})
+        ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        ToolStripMenuItem1.Size = New Size(46, 20)
+        ToolStripMenuItem1.Text = "Datei"
+        ' 
+        ' BeendenToolStripMenuItem
+        ' 
+        BeendenToolStripMenuItem.Name = "BeendenToolStripMenuItem"
+        BeendenToolStripMenuItem.Size = New Size(120, 22)
+        BeendenToolStripMenuItem.Text = "Beenden"
+        ' 
+        ' BearbeitenToolStripMenuItem
+        ' 
+        BearbeitenToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {ExportToolStripMenuItem})
+        BearbeitenToolStripMenuItem.Name = "BearbeitenToolStripMenuItem"
+        BearbeitenToolStripMenuItem.Size = New Size(75, 20)
+        BearbeitenToolStripMenuItem.Text = "Bearbeiten"
+        ' 
+        ' ExportToolStripMenuItem
+        ' 
+        ExportToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {TokennutzungToolStripMenuItem, LizenznutzungToolStripMenuItem})
+        ExportToolStripMenuItem.Name = "ExportToolStripMenuItem"
+        ExportToolStripMenuItem.Size = New Size(180, 22)
+        ExportToolStripMenuItem.Text = "Export"
+        ' 
+        ' TokennutzungToolStripMenuItem
+        ' 
+        TokennutzungToolStripMenuItem.Name = "TokennutzungToolStripMenuItem"
+        TokennutzungToolStripMenuItem.Size = New Size(180, 22)
+        TokennutzungToolStripMenuItem.Text = "Tokennutzung"
+        ' 
+        ' LizenznutzungToolStripMenuItem
+        ' 
+        LizenznutzungToolStripMenuItem.Name = "LizenznutzungToolStripMenuItem"
+        LizenznutzungToolStripMenuItem.Size = New Size(180, 22)
+        LizenznutzungToolStripMenuItem.Text = "Lizenznutzung"
         ' 
         ' frmBrowser
         ' 
@@ -952,6 +1087,8 @@ Partial Class frmBrowser
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1299, 636)
         Controls.Add(tabMain)
+        Controls.Add(MainMenu)
+        MainMenuStrip = MainMenu
         Name = "frmBrowser"
         Text = "frmBrowser"
         CType(dgvInhalt, ComponentModel.ISupportInitialize).EndInit()
@@ -1007,7 +1144,10 @@ Partial Class frmBrowser
         CType(dgvAEC, ComponentModel.ISupportInitialize).EndInit()
         tpToken.ResumeLayout(False)
         CType(dgvToken, ComponentModel.ISupportInitialize).EndInit()
+        MainMenu.ResumeLayout(False)
+        MainMenu.PerformLayout()
         ResumeLayout(False)
+        PerformLayout()
     End Sub
 
     Friend WithEvents cmdSoftware As Button
@@ -1081,4 +1221,18 @@ Partial Class frmBrowser
     Friend WithEvents cbLizenzProdukt As ComboBox
     Friend WithEvents Label16 As Label
     Friend WithEvents cbLizenzGruppe As ComboBox
+    Friend WithEvents cmdNutzungAEC As Button
+    Friend WithEvents cmdNutzungFlex As Button
+    Friend WithEvents cmdGesamtAEC As Button
+    Friend WithEvents cmdGesamtToken As Button
+    Friend WithEvents Label17 As Label
+    Friend WithEvents cbUserRolle As ComboBox
+    Friend WithEvents cbxGastUser As CheckBox
+    Friend WithEvents MainMenu As MenuStrip
+    Friend WithEvents ToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents BeendenToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents BearbeitenToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ExportToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents TokennutzungToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents LizenznutzungToolStripMenuItem As ToolStripMenuItem
 End Class

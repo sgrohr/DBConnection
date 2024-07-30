@@ -1,6 +1,9 @@
 ﻿
 
 Imports System.ComponentModel
+Imports System.DirectoryServices
+Imports System.DirectoryServices.ActiveDirectory
+Imports System.Runtime.InteropServices.JavaScript.JSType
 Imports ABI.Windows.ApplicationModel.Activation
 Imports FLPExcel
 Imports Georg
@@ -10,11 +13,13 @@ Public Class frmBrowser
     Private log As Boolean = False
     Private Const C_None As String = "<none>"
     Private titel As String = "Lizenzanalyse Autodesk 1.0"
+    Private strPfad As String = "c:\tmp\ImportFehler\" & System.Environment.UserName
 
 #Region "Eventhandler"
 
     Private Sub frmBrowser_Load(sender As Object, e As EventArgs) Handles Me.Load
         tabMain.TabPages.Remove(TabTabellen)
+        tabMain.TabPages.Remove(tpNutzung)
         'tabMain.TabPages.Remove(tpSubscritions)
         'tabMain.TabPages.Remove(tpLizenznutzung)
 
@@ -40,6 +45,13 @@ Public Class frmBrowser
         Next
         cbUserGruppe.SelectedIndex = 0
         cbNutzGruppe.SelectedIndex = 0
+
+        Dim BenutzerRollen As DataTable = cmd.GetTableFromSelect("SYS", "select distinct role from benutzer")
+        cbUserRolle.Items.Add(C_None)
+        For Each dr As DataRow In BenutzerRollen.Rows
+            cbUserRolle.Items.Add(dr("role"))
+        Next
+        cbUserRolle.SelectedIndex = 0
 
         Dim SubBenutzer As DataTable = cmd.GetTableFromSelect("SYS", "select first_name,last_name from benutzer order by last_name")
         cbSubBenutzer.Items.Add(C_None)
@@ -124,20 +136,48 @@ Public Class frmBrowser
             cbLizenzZugriff.Items.Add(dr(0))
         Next
         cbLizenzZugriff.SelectedIndex = 0
-
-
-
-
         tabMain.SelectedTab = tpBenutzer
 
     End Sub
 
+    Private Sub tabMain_SelectedIndexChanged(sender As Object, e As EventArgs) Handles tabMain.SelectedIndexChanged
+        Select Case tabMain.SelectedTab.Name
+            Case "tpBenutzer"
+                Me.Text = titel & " | " & dgvBenutzer.Rows.Count & " angezeigte Datensätze"
+            Case "tpLizenznutzung"
+                Me.Text = titel & " | " & dgvLizenznutzung.Rows.Count & " angezeigte Datensätze"
+            Case "tpSubscritions"
+                Me.Text = titel & " | " & dgvSubsriptions.Rows.Count & " angezeigte Datensätze"
+            Case "TpImport"
+                Me.Text = titel & " | " & dgExcelcontent.Rows.Count & " angezeigte Datensätze"
+            Case "tpAbos"
+                Me.Text = titel & " | " & dgvAbos.Rows.Count & " angezeigte Datensätze"
+            Case "tpNutzung"
+                Me.Text = titel & " | " & dgvNutzung.Rows.Count & " angezeigte Datensätze"
+            Case "tpToken"
+                Me.Text = titel & " | " & dgvToken.Rows.Count & " angezeigte Datensätze"
+            Case "tpAEC"
+                Me.Text = titel & " | " & dgvAEC.Rows.Count & " angezeigte Datensätze"
+            Case Else
+                Me.Text = titel
+        End Select
+    End Sub
+
+
     Private Sub cmdBerichtToken_Click(sender As Object, e As EventArgs) Handles cmdBerichtToken.Click
-        CreateReport4Token()
+        CreateReport4Token("vnutzung", "'Tokens'", cbNutzMonat.SelectedItem.ToString)
     End Sub
 
     Private Sub cmdBerichtAEC_Click(sender As Object, e As EventArgs) Handles cmdBerichtAEC.Click
-        CreateReport4AEC()
+        CreateReport4AEC("'Architecture Engineering & Construction Collection'", "vnutzung", "'Seats'", cbNutzMonat.SelectedItem.ToString)
+    End Sub
+
+    Private Sub cmdNutzungFlex_Click(sender As Object, e As EventArgs) Handles cmdNutzungFlex.Click
+        CreateReport4Token("vusage", "'Flex'", cbLizenzMonat.SelectedItem.ToString)
+    End Sub
+
+    Private Sub cmdNutzungAEC_Click(sender As Object, e As EventArgs) Handles cmdNutzungAEC.Click
+        CreateReport4AEC("'Architecture Engineering & Construction Collection'", "vusage", "'Subscription'", cbLizenzMonat.SelectedItem.ToString)
     End Sub
 
 
@@ -198,7 +238,7 @@ Public Class frmBrowser
 
             If log Then
                 Tools.clsLogfile.CloseLogFile()
-                MsgBox("Logdatei erstellt. Diese finden Sie unter " & "c:\tmp\ImportFehler\" & System.Environment.UserName, MsgBoxStyle.Information, "Fehler gefunden!")
+                MsgBox("Logdatei erstellt. Diese finden Sie unter " & strPfad, MsgBoxStyle.Information, "Fehler gefunden!")
             End If
             MsgBox("Import erfolgreich abgeschlossen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmende")
             Application.Exit()
@@ -210,6 +250,9 @@ Public Class frmBrowser
     Private Sub frmBrowser_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         FLPExcel.clsExcelImport.CloseExcel()
     End Sub
+
+
+#End Region
 
 #Region "Beispiel Prozess"
 
@@ -278,73 +321,37 @@ Public Class frmBrowser
     End Sub
 #End Region
 
-#End Region
-
 #Region "Monatsberichte"
-
-    Private Sub CreateReport4Token()
-        Dim access_option As String = "'Tokens'"
-        Dim Monat As String = cbNutzMonat.SelectedItem
+    Private Sub CreateReport4AEC(produkt As String, viewname As String, strOption As String, Monat As String)
         Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
-        Dim strsql As String = "select * from vnutzung where access_option=" & access_option &
-                                " and to_char(day_used, 'YYYY-MM')='" & Monat & "'"
+        Dim strsql As String = ""
+        Select Case viewname
+            Case "vusage"
+                strsql = "select * from " & viewname & " where produkt=" & produkt & " and access_option=" & strOption &
+                         " and month='" & Monat & "' order by bereich"
+            Case "vnutzung"
+                strsql = "select * from " & viewname & " where offering_name=" & produkt & " and access_option=" & strOption &
+                         " and to_char(day_used, 'YYYY-MM')='" & Monat & "' order by bereich"
+        End Select
         Dim dt As DataTable = cmd.GetTableFromSelect("SYS", strsql)
-        Dim lBenutzer As New Dictionary(Of String, String)
-        Dim lTokens As New Dictionary(Of String, Integer)
-        For Each row As DataRow In dt.Rows
-            If Not lBenutzer.Keys.Contains(row("email").ToString) Then
-                lBenutzer.Add(row("email").ToString, row("gruppe").ToString)
-                If Not lTokens.ContainsKey(row("gruppe").ToString) Then
-                    lTokens.Add(row("gruppe").ToString, 1)
-                Else
-                    Dim Anzahl As Integer = lTokens(row("gruppe").ToString)
-                    lTokens(row("gruppe").ToString) = Anzahl + CInt(row("tokens_used"))
-                End If
-            End If
-        Next
-        Dim dtToken As DataTable = New DataTable
-        Tools.CreateColumn(dtToken, "Gruppe", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
-        Tools.CreateColumn(dtToken, "Lizenzen/Email", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
-        Dim usedLicenes As Integer = 0
-        For Each kvp As KeyValuePair(Of String, Integer) In lTokens
-            dtToken.Rows.Add(kvp.Key, kvp.Value)
-            usedLicenes += kvp.Value
-        Next
-        dtToken.Rows.Add("Genutzte Tokens in " & Monat & ":", usedLicenes.ToString)
-        dtToken.Rows.Add("", "")
-        dtToken.Rows.Add("", "")
-        For Each kvp As KeyValuePair(Of String, String) In lBenutzer
-            dtToken.Rows.Add(kvp.Value, kvp.Key)
-        Next
-        dgvToken.DataSource = dtToken
-        tabMain.SelectedTab = tpToken
-    End Sub
-
-
-    Private Sub CreateReport4AEC()
-        Dim offering_name As String = "'Architecture Engineering & Construction Collection'"
-        Dim access_option As String = "'Seats'"
-        Dim Monat As String = cbNutzMonat.SelectedItem
-        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
-        Dim strsql As String = "select * from vnutzung where offering_name=" & offering_name & " and access_option=" & access_option &
-                                " and to_char(day_used, 'YYYY-MM')='" & Monat & "'"
-        Dim dt As DataTable = cmd.GetTableFromSelect("SYS", strsql)
-        Dim lBenutzer As New Dictionary(Of String, String)
+        Dim lBenutzer As New Dictionary(Of String, Integer)
         Dim lLizenzen As New Dictionary(Of String, Integer)
         For Each row As DataRow In dt.Rows
-            If Not lBenutzer.Keys.Contains(row("email").ToString) Then
-                lBenutzer.Add(row("email").ToString, row("gruppe").ToString)
-                If Not lLizenzen.ContainsKey(row("gruppe").ToString) Then
-                    lLizenzen.Add(row("gruppe").ToString, 1)
-                Else
-                    Dim Anzahl As Integer = lLizenzen(row("gruppe").ToString)
-                    lLizenzen(row("gruppe").ToString) = Anzahl + 1
-                End If
+            If Not lBenutzer.Keys.Contains(row("bereich").ToString & " | " & row("email").ToString) Then
+                lBenutzer.Add(row("bereich").ToString & " | " & row("email").ToString, CInt(row("days_used").ToString))
+            Else
+                lBenutzer(row("bereich").ToString & " | " & row("email").ToString) = lBenutzer(row("bereich").ToString & " | " & row("email").ToString) + CInt(row("days_used").ToString)
+            End If
+            If Not lLizenzen.ContainsKey(row("bereich").ToString) Then
+                lLizenzen.Add(row("bereich").ToString, 1)
+            Else
+                Dim Anzahl As Integer = lLizenzen(row("bereich").ToString)
+                lLizenzen(row("bereich").ToString) = Anzahl + 1
             End If
         Next
         Dim dtAEC As DataTable = New DataTable
-        Tools.CreateColumn(dtAEC, "Gruppe", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
-        Tools.CreateColumn(dtAEC, "Lizenzen/Email", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtAEC, "Bereich", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtAEC, "Lizenzen/Anzahl Tage", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
         Dim usedLicenes As Integer = 0
         For Each kvp As KeyValuePair(Of String, Integer) In lLizenzen
             dtAEC.Rows.Add(kvp.Key, kvp.Value)
@@ -353,11 +360,223 @@ Public Class frmBrowser
         dtAEC.Rows.Add("Genutzte Lizenzen in " & Monat & ":", usedLicenes.ToString)
         dtAEC.Rows.Add("", "")
         dtAEC.Rows.Add("", "")
-        For Each kvp As KeyValuePair(Of String, String) In lBenutzer
-            dtAEC.Rows.Add(kvp.Value, kvp.Key)
+        For Each kvp As KeyValuePair(Of String, Integer) In lBenutzer
+            dtAEC.Rows.Add(kvp.Key, kvp.Value)
         Next
         dgvAEC.DataSource = dtAEC
         tabMain.SelectedTab = tpAEC
+    End Sub
+
+    Private Sub CreateReport4Token(viewname As String, access_option As String, Monat As String)
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
+        Dim strsql As String = ""
+        Select Case viewname
+            Case "vusage"
+                strsql = "select * from " & viewname & " where access_option=" & access_option &
+                         " and month='" & Monat & "' order by bereich"
+            Case "vnutzung"
+                strsql = "select * from " & viewname & " where access_option=" & access_option &
+                         " and to_char(day_used, 'YYYY-MM')='" & Monat & "' order by bereich"
+        End Select
+        Dim dt As DataTable = cmd.GetTableFromSelect("SYS", strsql)
+        Dim lBenutzer As New Dictionary(Of String, Integer)
+        Dim lTokens As New Dictionary(Of String, Integer)
+        For Each row As DataRow In dt.Rows
+            If Not lBenutzer.Keys.Contains(row("bereich").ToString & " | " & row("email").ToString) Then
+                lBenutzer.Add(row("bereich").ToString & " | " & row("email").ToString, CInt(row("tokens_used").ToString))
+            Else
+                lBenutzer(row("bereich").ToString & " | " & row("email").ToString) = lBenutzer(row("bereich").ToString & " | " & row("email").ToString) + CInt(row("tokens_used").ToString)
+            End If
+            If Not lTokens.ContainsKey(row("bereich").ToString) Then
+                lTokens.Add(row("bereich").ToString, CInt(row("tokens_used")))
+            Else
+                Dim Anzahl As Integer = lTokens(row("bereich").ToString)
+                lTokens(row("bereich").ToString) = Anzahl + CInt(row("tokens_used"))
+            End If
+        Next
+        Dim dtToken As DataTable = New DataTable
+        Tools.CreateColumn(dtToken, "Bereich", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtToken, "Lizenzen/Anzahl Tokens", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Dim usedLicenes As Integer = 0
+        For Each kvp As KeyValuePair(Of String, Integer) In lTokens
+            dtToken.Rows.Add(kvp.Key, kvp.Value)
+            usedLicenes += kvp.Value
+        Next
+        dtToken.Rows.Add("Genutzte Tokens in " & Monat & ":", usedLicenes.ToString)
+        dtToken.Rows.Add("", "")
+        dtToken.Rows.Add("", "")
+        For Each kvp As KeyValuePair(Of String, Integer) In lBenutzer
+            dtToken.Rows.Add(kvp.Key, kvp.Value)
+        Next
+        dgvToken.DataSource = dtToken
+        tabMain.SelectedTab = tpToken
+    End Sub
+
+    Private Sub cmdGesamtAEC_Click(sender As Object, e As EventArgs) Handles cmdGesamtAEC.Click
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
+        Dim dtNutzung As DataTable = cmd.GetTableFromSelect("SYS", "select * from vusage v  where produkt ='Architecture Engineering & Construction Collection' order by bereich")
+        Dim lBenutzer As New Dictionary(Of String, Dictionary(Of String, Integer))
+        For Each row As DataRow In dtNutzung.Rows
+            Dim strBenutzer As String = row("vorname").ToString & " | " & row("nachname").ToString & " | " &
+                                           row("team").ToString & " | " & row("gruppe").ToString & " | " &
+                                           row("Bereich").ToString & " | " & row("abteilung").ToString & " | " & row("email").ToString
+            If Not lBenutzer.Keys.Contains(strBenutzer) Then
+                lBenutzer.Add(strBenutzer, New Dictionary(Of String, Integer))
+                lBenutzer(strBenutzer).Add(row("month").ToString, CInt(row("days_used").ToString))
+            Else
+                If lBenutzer(strBenutzer).ContainsKey(row("month").ToString) Then
+                    lBenutzer(strBenutzer)(row("month").ToString) =
+                        lBenutzer(strBenutzer)(row("month").ToString) + CInt(row("days_used").ToString)
+                Else
+                    lBenutzer(strBenutzer).Add(row("month").ToString, CInt(row("days_used").ToString))
+                End If
+            End If
+        Next
+        Dim Subtimes As DataTable = cmd.GetTableFromSelect("SYS", "select distinct month from vusage order by month")
+        Dim dtAECGesamtnutzung As DataTable = New DataTable
+        Tools.CreateColumn(dtAECGesamtnutzung, "Vorname", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtAECGesamtnutzung, "Nachname", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtAECGesamtnutzung, "Team", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtAECGesamtnutzung, "Gruppe", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtAECGesamtnutzung, "Bereich", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtAECGesamtnutzung, "Abteilung", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtAECGesamtnutzung, "EMail", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        For Each dr As DataRow In Subtimes.Rows
+            Tools.CreateColumn(dtAECGesamtnutzung, dr("month"), Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Next
+        For Each strBenutzer As String In lBenutzer.Keys
+            Dim newdr As DataRow = dtAECGesamtnutzung.NewRow
+            Dim teile() As String = Split(strBenutzer, "|")
+            newdr("Vorname") = Trim(teile(0))
+            newdr("Nachname") = Trim(teile(1))
+            newdr("Team") = Trim(teile(2))
+            newdr("Gruppe") = Trim(teile(3))
+            newdr("Bereich") = Trim(teile(4))
+            newdr("Abteilung") = Trim(teile(5))
+            newdr("EMail") = Trim(teile(6))
+            For Each dicNutzung As KeyValuePair(Of String, Integer) In lBenutzer(strBenutzer)
+                newdr(dicNutzung.Key) = dicNutzung.Value
+            Next
+            dtAECGesamtnutzung.Rows.Add(newdr)
+        Next
+        dgvAEC.DataSource = dtAECGesamtnutzung
+        If dtAECGesamtnutzung IsNot Nothing Then Text = titel & " | " & dtAECGesamtnutzung.Rows.Count & " angezeigte Datensätze"
+        tabMain.SelectedTab = tpAEC
+    End Sub
+
+    Private Sub cmdGesamtToken_Click(sender As Object, e As EventArgs) Handles cmdGesamtToken.Click
+        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
+        Dim dtNutzung As DataTable = cmd.GetTableFromSelect("SYS", "select * from vusage where access_option='Flex' order by bereich")
+        Dim lBenutzer As New Dictionary(Of String, Dictionary(Of String, Integer))
+        For Each row As DataRow In dtNutzung.Rows
+
+            Dim strBenutzer As String = row("vorname").ToString & " | " & row("nachname").ToString & " | " &
+                                           row("team").ToString & " | " & row("gruppe").ToString & " | " &
+                                           row("bereich").ToString & " | " & row("abteilung").ToString & " | " & row("email").ToString
+            If Not lBenutzer.Keys.Contains(strBenutzer) Then
+                lBenutzer.Add(strBenutzer, New Dictionary(Of String, Integer))
+                lBenutzer(strBenutzer).Add(row("month").ToString, CInt(row("tokens_used").ToString))
+            Else
+                If lBenutzer(strBenutzer).ContainsKey(row("month").ToString) Then
+                    lBenutzer(strBenutzer)(row("month").ToString) =
+                        lBenutzer(strBenutzer)(row("month").ToString) + CInt(row("tokens_used").ToString)
+                Else
+                    lBenutzer(strBenutzer).Add(row("month").ToString, CInt(row("tokens_used").ToString))
+                End If
+            End If
+        Next
+        Dim Subtimes As DataTable = cmd.GetTableFromSelect("SYS", "select distinct month from vusage order by month")
+        Dim dtTokenGesamtnutzung As DataTable = New DataTable
+        Tools.CreateColumn(dtTokenGesamtnutzung, "Vorname", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtTokenGesamtnutzung, "Nachname", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtTokenGesamtnutzung, "Team", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtTokenGesamtnutzung, "Gruppe", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtTokenGesamtnutzung, "Bereich", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtTokenGesamtnutzung, "Abteilung", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Tools.CreateColumn(dtTokenGesamtnutzung, "EMail", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        For Each dr As DataRow In Subtimes.Rows
+            Tools.CreateColumn(dtTokenGesamtnutzung, dr("month"), Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
+        Next
+        For Each strBenutzer As String In lBenutzer.Keys
+            Dim newdr As DataRow = dtTokenGesamtnutzung.NewRow
+            Dim teile() As String = Split(strBenutzer, "|")
+            newdr("Vorname") = Trim(teile(0))
+            newdr("Nachname") = Trim(teile(1))
+            newdr("Team") = Trim(teile(2))
+            newdr("Gruppe") = Trim(teile(3))
+            newdr("Bereich") = Trim(teile(4))
+            newdr("Abteilung") = Trim(teile(5))
+            newdr("EMail") = Trim(teile(6))
+            For Each dicNutzung As KeyValuePair(Of String, Integer) In lBenutzer(strBenutzer)
+                newdr(dicNutzung.Key) = dicNutzung.Value
+            Next
+            dtTokenGesamtnutzung.Rows.Add(newdr)
+        Next
+        dgvToken.DataSource = dtTokenGesamtnutzung
+        If dtTokenGesamtnutzung IsNot Nothing Then Text = titel & " | " & dtTokenGesamtnutzung.Rows.Count & " angezeigte Datensätze"
+        tabMain.SelectedTab = tpToken
+    End Sub
+
+    Private Sub TokennutzungToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TokennutzungToolStripMenuItem.Click
+        If dgvToken.DataSource IsNot Nothing Then
+            Dim dt As DataTable = dgvToken.DataSource
+            If dt.Rows.Count > 0 Then
+                Me.Cursor = Cursors.WaitCursor
+                Dim Excel As New FLPExcel.clsExcel
+                Dim Dateiname As String = "Tokennutzung_" & Tools.TimestampFilename & ".xlsx"
+                Tools.MakeDirIfNeeded(strPfad)
+                Dim pfad As New IO.DirectoryInfo(strPfad)
+                Excel.NewDocument(Dateiname, "Tokennutzung", pfad)
+                Dim Spalten(dt.Columns.Count - 1) As String
+                Dim Spaltenzaehler As Integer = 0
+                For Each col As DataColumn In dt.Columns
+                    Spalten(Spaltenzaehler) = col.ColumnName
+                    Spaltenzaehler += 1
+                Next
+                Excel.FillExcelBold(Spalten, FLPExcel.eExcelFarbe.C_GRAU40)
+                For Each row As DataRow In dt.Rows
+                    For i As Integer = 0 To dt.Columns.Count - 1
+                        Spalten(i) = row(i).ToString
+                    Next
+                    Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_GRAU25)
+                Next
+                Excel.CloseDocument()
+                Me.Cursor = Cursors.Default
+                MsgBox("Tokennutzung erstellt!", MsgBoxStyle.Information, "Erfolgreich ausgeführt")
+                Excel.OpenDocument(strPfad & "\" & Dateiname)
+            End If
+        End If
+    End Sub
+
+    Private Sub AECnutzungToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LizenznutzungToolStripMenuItem.Click
+        If dgvAEC.DataSource IsNot Nothing Then
+            Dim dt As DataTable = dgvAEC.DataSource
+            If dt.Rows.Count > 0 Then
+                Me.Cursor = Cursors.WaitCursor
+                Dim Excel As New FLPExcel.clsExcel
+                Dim Dateiname As String = "Lizenznutzung_" & Tools.TimestampFilename & ".xlsx"
+                Tools.MakeDirIfNeeded(strPfad)
+                Dim pfad As New IO.DirectoryInfo(strPfad)
+                Excel.NewDocument(Dateiname, "Lizenznutzung_", pfad)
+                Dim Spalten(dt.Columns.Count - 1) As String
+                Dim Spaltenzaehler As Integer = 0
+                For Each col As DataColumn In dt.Columns
+                    Spalten(Spaltenzaehler) = col.ColumnName
+                    Spaltenzaehler += 1
+                Next
+                Excel.FillExcelBold(Spalten, FLPExcel.eExcelFarbe.C_GRAU40)
+                For Each row As DataRow In dt.Rows
+                    For i As Integer = 0 To dt.Columns.Count - 1
+                        Spalten(i) = row(i).ToString
+                    Next
+                    Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_GRAU25)
+                Next
+                Excel.CloseDocument()
+                Me.Cursor = Cursors.Default
+                MsgBox("Lizenznutzung erstellt!", MsgBoxStyle.Information, "Erfolgreich ausgeführt")
+                Excel.OpenDocument(strPfad & "\" & Dateiname)
+            End If
+        End If
     End Sub
 
 
@@ -412,8 +631,7 @@ Public Class frmBrowser
         Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
         For Each excelrow As DataRow In dt.Rows
             Dim strsql As String = "update benutzer set " &
-                                        "abteilung='" & excelrow("abteilung") & "' where first_name='" & excelrow("Vorname") & "'" &
-                                        " and last_name='" & excelrow("Nachname") & "'"
+                                        "abteilung='" & excelrow("abteilung") & "' where lower(email)='" & excelrow("E-Mail (Arbeit)").ToString.ToLower & "'"
             zaehler += cmd.ExecuteNonQueryOld("SYS", strsql)
         Next
         MsgBox("Es wurden " & zaehler & " Benutzer in der Datenbank aktualisiert", MsgBoxStyle.OkOnly, "Abgeschlossen!")
@@ -684,94 +902,88 @@ Public Class frmBrowser
                                                                  "' and nachname='" & VorNachname(0) & "'" &
                                                                  " and month='" & selectedMonth & "' order by produkt")
                     dgvSubsriptions.DataSource = dt
-                    Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                    If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
                 Else
                     Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where vorname='" & VorNachname(1) &
                                                                  "' and nachname='" & VorNachname(0) & "' order by produkt")
                     dgvSubsriptions.DataSource = dt
-                    Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                    If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
                 End If
             End If
         Else
             If selectedMonth <> C_None Then
                 Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where month='" & selectedMonth & "' order by email")
                 dgvSubsriptions.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             Else
                 Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription order by email,month")
                 dgvSubsriptions.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+                If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             End If
         End If
     End Sub
 
-    Private Sub cbLizenzBenutzer_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbLizenzBenutzer.SelectedIndexChanged, cbLizenzMonat.SelectedIndexChanged
-        If cbLizenzBenutzer.Items.Count = 0 Or cbLizenzMonat.Items.Count = 0 Then Return
-        Dim selectedUser = cbLizenzBenutzer.SelectedItem.ToString
-        Dim selectedMonth = cbLizenzMonat.SelectedItem.ToString
-        Dim VorNachname = Split(selectedUser, ", ")
-        Dim Vorname = ""
-        Dim Nachname = ""
-        Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
 
-        If selectedUser <> C_None Then
-            If VorNachname.Count = 2 Then
-                If selectedMonth <> C_None Then
-                    Dim dt = cmd.GetTableFromSelect("SYS", "select * from vusage where vorname='" & VorNachname(1) &
-                                                                 "' and nachname='" & VorNachname(0) & "'" &
-                                                                 " and month='" & selectedMonth & "' order by produkt")
-                    dgvLizenznutzung.DataSource = dt
-                    Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
-                Else
-                    Dim dt = cmd.GetTableFromSelect("SYS", "select * from vusage where vorname='" & VorNachname(1) &
-                                                                 "' and nachname='" & VorNachname(0) & "' order by produkt")
-                    dgvLizenznutzung.DataSource = dt
-                    Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
-                End If
-            End If
-        Else
-            If selectedMonth <> C_None Then
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vusage where month='" & selectedMonth & "' order by email")
-                dgvLizenznutzung.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
-            Else
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vusage order by email,month")
-                dgvLizenznutzung.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
-            End If
-        End If
-
+    Private Sub cbUserTeam_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbUserTeam.SelectedIndexChanged, cbUserGruppe.SelectedIndexChanged, cbUserRolle.SelectedIndexChanged
+        SetBenutzerInfos()
     End Sub
 
-    Private Sub cbUserTeam_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbUserTeam.SelectedIndexChanged, cbUserGruppe.SelectedIndexChanged
+    Private Sub cbxGastUser_CheckedChanged(sender As Object, e As EventArgs) Handles cbxGastUser.CheckedChanged
+        SetBenutzerInfos()
+    End Sub
+
+    Private Sub SetBenutzerInfos()
         If cbUserGruppe.Items.Count = 0 Then Return
         If cbUserTeam.Items.Count = 0 Then Return
+        If cbUserRolle.Items.Count = 0 Then Return
         Dim selectedTeam = cbUserTeam.SelectedItem.ToString
         Dim selectedGroup = cbUserGruppe.SelectedItem.ToString
         Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
-        If selectedTeam <> C_None Then
-            If selectedGroup <> C_None Then
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer where team_name='" & selectedTeam &
-                                                             "' and group_name='" & selectedGroup & "' order by group_name")
-                dgvBenutzer.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
-            Else
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer where team_name='" & selectedTeam & "' order by team_name")
-                dgvBenutzer.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
-            End If
+        Dim bedingung As String = getBenutzerBedingung()
+        If Len(bedingung) > 0 Then
+            Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer where " & bedingung & " order by last_name")
+            dgvBenutzer.DataSource = dt
+            If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
         Else
-            If selectedGroup <> C_None Then
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer where group_name='" & selectedGroup & "' order by group_name")
-                dgvBenutzer.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
-            Else
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer order by email")
-                dgvBenutzer.DataSource = dt
-                Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
-            End If
+            Dim dt = cmd.GetTableFromSelect("SYS", "select * from benutzer order by last_name")
+            dgvBenutzer.DataSource = dt
+            If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
         End If
     End Sub
+
+    Private Function getBenutzerBedingung() As String
+        Dim retVal As String = ""
+        Dim selectedGruppe As String = C_None
+        Dim selectedTeam As String = C_None
+        Dim selectedRolle As String = C_None
+        If cbUserTeam.Items.Count > 0 Then
+            selectedTeam = cbUserTeam.SelectedItem.ToString
+        End If
+        If cbUserGruppe.Items.Count > 0 Then
+            selectedGruppe = cbUserGruppe.SelectedItem.ToString
+        End If
+        If cbUserRolle.Items.Count > 0 Then
+            selectedRolle = cbUserRolle.SelectedItem.ToString
+        End If
+        If selectedGruppe <> C_None Then
+            retVal &= "and group_name='" & selectedGruppe & "' "
+        End If
+        If selectedTeam <> C_None Then
+            retVal &= "and team_name='" & selectedTeam & "' "
+        End If
+        If selectedRolle <> C_None Then
+            retVal &= "and role='" & selectedRolle & "' "
+        End If
+        If Not cbxGastUser.Checked Then
+            retVal &= "and role<>'User (guest)'"
+        End If
+        If Len(retVal) > 0 Then
+            retVal = Mid(retVal, 4)
+        End If
+        Return retVal
+    End Function
+
+
 
     Private Sub cbAbosProdukt_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbAbosProdukt.SelectedIndexChanged
         If cbAbosProdukt.Items.Count = 0 Then Return
@@ -780,11 +992,11 @@ Public Class frmBrowser
         If selectedProdukt <> C_None Then
             Dim dt = cmd.GetTableFromSelect("SYS", "select * from abonnements where offering_name='" & selectedProdukt & "'")
             dgvAbos.DataSource = dt
-            Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+            If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
         Else
             Dim dt = cmd.GetTableFromSelect("SYS", "select * from abonnements")
             dgvAbos.DataSource = dt
-            Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+            If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
         End If
 
     End Sub
@@ -809,7 +1021,7 @@ Public Class frmBrowser
         If Len(bedingung) > 0 Then
             Dim dt = cmd.GetTableFromSelect("SYS", "select " & strSpalten & " from vnutzung where " & bedingung)
             dgvNutzung.DataSource = dt
-            Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+            If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
         Else
             dgvNutzung.DataSource = Nothing
         End If
@@ -865,15 +1077,23 @@ Public Class frmBrowser
         If cbLizenzProdukt.Items.Count = 0 Then Return
         If cbLizenzZugriff.Items.Count = 0 Then Return
         If cbLizenzGruppe.Items.Count = 0 Then Return
+        If cbLizenzMonat.SelectedItem <> C_None Then
+            cmdNutzungAEC.Enabled = True
+            cmdNutzungFlex.Enabled = True
+        Else
+            cmdNutzungAEC.Enabled = False
+            cmdNutzungFlex.Enabled = False
+        End If
+
         Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
         Dim strSpalten = "vorname,nachname,email,team,gruppe,abteilung,rolle,account_status,produkt,access_option," &
                          "days_used,monthly_average,tokens_used,last_accessed,month"
         Dim bedingung = getLizenzBedingung()
 
         If Len(bedingung) > 0 Then
-            Dim dt = cmd.GetTableFromSelect("SYS", "select " & strSpalten & " from vusage where " & bedingung)
+            Dim dt = cmd.GetTableFromSelect("SYS", "select " & strSpalten & " from vusage where " & bedingung & " order by days_used")
             dgvLizenznutzung.DataSource = dt
-            Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
+            If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
         Else
             dgvLizenznutzung.DataSource = Nothing
         End If
@@ -928,27 +1148,6 @@ Public Class frmBrowser
         End If
         Return retVal
     End Function
-
-    Private Sub tabMain_SelectedIndexChanged(sender As Object, e As EventArgs) Handles tabMain.SelectedIndexChanged
-        Select Case tabMain.SelectedTab.Name
-            Case "tpBenutzer"
-                Me.Text = titel & " | " & dgvBenutzer.Rows.Count & " angezeigte Datensätze"
-            Case "tpLizenznutzung"
-                Me.Text = titel & " | " & dgvLizenznutzung.Rows.Count & " angezeigte Datensätze"
-            Case "tpSubscritions"
-                Me.Text = titel & " | " & dgvSubsriptions.Rows.Count & " angezeigte Datensätze"
-            Case "TpImport"
-                Me.Text = titel & " | " & dgExcelcontent.Rows.Count & " angezeigte Datensätze"
-            Case "tpAbos"
-                Me.Text = titel & " | " & dgvAbos.Rows.Count & " angezeigte Datensätze"
-            Case "tpNutzung"
-                Me.Text = titel & " | " & dgvNutzung.Rows.Count & " angezeigte Datensätze"
-            Case Else
-                Me.Text = titel
-        End Select
-    End Sub
-
-
 #End Region
 
 End Class
