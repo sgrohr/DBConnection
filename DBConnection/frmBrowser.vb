@@ -5,6 +5,7 @@ Imports System.DirectoryServices
 Imports System.DirectoryServices.ActiveDirectory
 Imports System.Runtime.InteropServices.JavaScript.JSType
 Imports ABI.Windows.ApplicationModel.Activation
+Imports DBConnection.My
 Imports FLPExcel
 Imports Georg
 Public Class frmBrowser
@@ -24,6 +25,10 @@ Public Class frmBrowser
         'tabMain.TabPages.Remove(tpLizenznutzung)
 
         Me.Text = titel
+        txtLizenzpreis.Text = My.Settings.Lizenzpreis
+        txtTokenpreis.Text = My.Settings.Tokenpreis
+        txtmaxNutzung.Text = My.Settings.Lizenznutzung
+
         Dim cmd = DB.clsConnection.Manager.GetCommand(DB.clsConnection.SYS)
 
         Dim BenutzerTeams As DataTable = cmd.GetTableFromSelect("SYS", "select distinct team_name from benutzer")
@@ -53,10 +58,12 @@ Public Class frmBrowser
         Next
         cbUserRolle.SelectedIndex = 0
 
-        Dim SubBenutzer As DataTable = cmd.GetTableFromSelect("SYS", "select first_name,last_name from benutzer order by last_name")
+        Dim SubBenutzer As DataTable = cmd.GetTableFromSelect("SYS", "select vorname,nachname from vsubscription order by nachname")
         cbSubBenutzer.Items.Add(C_None)
         For Each dr As DataRow In SubBenutzer.Rows
-            cbSubBenutzer.Items.Add(dr("last_name") & ", " & dr("first_name"))
+            If Not cbSubBenutzer.Items.Contains(dr("nachname") & ", " & dr("vorname")) Then
+                cbSubBenutzer.Items.Add(dr("nachname") & ", " & dr("vorname"))
+            End If
         Next
         cbSubBenutzer.SelectedIndex = 0
 
@@ -67,10 +74,12 @@ Public Class frmBrowser
         Next
         cbSubMonat.SelectedIndex = 0
 
-        Dim LicBenutzer As DataTable = cmd.GetTableFromSelect("SYS", "select first_name,last_name from benutzer order by last_name")
+        Dim LicBenutzer As DataTable = cmd.GetTableFromSelect("SYS", "select vorname,nachname from vusage order by nachname")
         cbLizenzBenutzer.Items.Add(C_None)
         For Each dr As DataRow In LicBenutzer.Rows
-            cbLizenzBenutzer.Items.Add(dr("last_name") & ", " & dr("first_name"))
+            If Not cbLizenzBenutzer.Items.Contains(dr("nachname") & ", " & dr("vorname")) Then
+                cbLizenzBenutzer.Items.Add(dr("nachname") & ", " & dr("vorname"))
+            End If
         Next
         cbLizenzBenutzer.SelectedIndex = 0
 
@@ -231,7 +240,7 @@ Public Class frmBrowser
                             UsageImport(dt, selectedsheet)
                         Else
                             MsgBox("Import abgebrochen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmabbruch")
-                            Application.Exit()
+                            System.Windows.Forms.Application.Exit()
                         End If
                 End Select
             End If
@@ -241,13 +250,21 @@ Public Class frmBrowser
                 MsgBox("Logdatei erstellt. Diese finden Sie unter " & strPfad, MsgBoxStyle.Information, "Fehler gefunden!")
             End If
             MsgBox("Import erfolgreich abgeschlossen. Programm wird beendet", MsgBoxStyle.OkOnly, "Programmende")
-            Application.Exit()
+            System.Windows.Forms.Application.Exit()
         Else
             init = True
         End If
     End Sub
 
+    Private Sub BeendenToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BeendenToolStripMenuItem.Click
+        System.Windows.Forms.Application.Exit()
+    End Sub
+
     Private Sub frmBrowser_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+        My.Settings.Lizenznutzung = txtmaxNutzung.Text
+        My.Settings.Lizenzpreis = txtLizenzpreis.Text
+        My.Settings.Tokenpreis = txtTokenpreis.Text
+        My.Settings.Save()
         FLPExcel.clsExcelImport.CloseExcel()
     End Sub
 
@@ -444,6 +461,7 @@ Public Class frmBrowser
         For Each dr As DataRow In Subtimes.Rows
             Tools.CreateColumn(dtAECGesamtnutzung, dr("month"), Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
         Next
+        Tools.CreateColumn(dtAECGesamtnutzung, "Mittelwert", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
         For Each strBenutzer As String In lBenutzer.Keys
             Dim newdr As DataRow = dtAECGesamtnutzung.NewRow
             Dim teile() As String = Split(strBenutzer, "|")
@@ -454,9 +472,17 @@ Public Class frmBrowser
             newdr("Bereich") = Trim(teile(4))
             newdr("Abteilung") = Trim(teile(5))
             newdr("EMail") = Trim(teile(6))
+            Dim Gesamtwert As Double = 0
+            Dim GefuellteMonate As Integer = 0
             For Each dicNutzung As KeyValuePair(Of String, Integer) In lBenutzer(strBenutzer)
+                Dim Monatswert As String = dicNutzung.Value.ToString
+                If IsNumeric(Monatswert) Then
+                    Gesamtwert += Monatswert
+                    GefuellteMonate += 1
+                End If
                 newdr(dicNutzung.Key) = dicNutzung.Value
             Next
+            newdr("Mittelwert") = Format(Gesamtwert / GefuellteMonate, "0.00")
             dtAECGesamtnutzung.Rows.Add(newdr)
         Next
         dgvAEC.DataSource = dtAECGesamtnutzung
@@ -497,6 +523,7 @@ Public Class frmBrowser
         For Each dr As DataRow In Subtimes.Rows
             Tools.CreateColumn(dtTokenGesamtnutzung, dr("month"), Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
         Next
+        Tools.CreateColumn(dtTokenGesamtnutzung, "Mittelwert", Tools.modTablesAndRows.eColumnFormat.Zeichen, False, False)
         For Each strBenutzer As String In lBenutzer.Keys
             Dim newdr As DataRow = dtTokenGesamtnutzung.NewRow
             Dim teile() As String = Split(strBenutzer, "|")
@@ -507,9 +534,17 @@ Public Class frmBrowser
             newdr("Bereich") = Trim(teile(4))
             newdr("Abteilung") = Trim(teile(5))
             newdr("EMail") = Trim(teile(6))
+            Dim Gesamtwert As Double = 0
+            Dim GefuellteMonate As Integer = 0
             For Each dicNutzung As KeyValuePair(Of String, Integer) In lBenutzer(strBenutzer)
+                Dim Monatswert As String = dicNutzung.Value.ToString
+                If IsNumeric(Monatswert) Then
+                    Gesamtwert += Monatswert
+                    GefuellteMonate += 1
+                End If
                 newdr(dicNutzung.Key) = dicNutzung.Value
             Next
+            newdr("Mittelwert") = Format(Gesamtwert / GefuellteMonate, "0.00")
             dtTokenGesamtnutzung.Rows.Add(newdr)
         Next
         dgvToken.DataSource = dtTokenGesamtnutzung
@@ -538,7 +573,21 @@ Public Class frmBrowser
                     For i As Integer = 0 To dt.Columns.Count - 1
                         Spalten(i) = row(i).ToString
                     Next
-                    Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_GRAU25)
+                    If Len(row(dt.Columns.Count - 2).ToString) > 0 Then
+                        Dim Mittelwert As Double = CDbl(row("Mittelwert"))
+                        Dim MaxToken As Double = CDbl(txtLizenzpreis.Text) / (12 * CDbl(txtTokenpreis.Text))
+                        If Mittelwert > MaxToken Then
+                            Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_HELLORANGE)
+                        Else
+                            If CDbl(row(dt.Columns.Count - 2)) > MaxToken Then
+                                Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_HELLGELB)
+                            Else
+                                Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_HELLGRUEN)
+                            End If
+                        End If
+                    Else
+                        Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_HELLGRUEN)
+                    End If
                 Next
                 Excel.CloseDocument()
                 Me.Cursor = Cursors.Default
@@ -569,7 +618,21 @@ Public Class frmBrowser
                     For i As Integer = 0 To dt.Columns.Count - 1
                         Spalten(i) = row(i).ToString
                     Next
-                    Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_GRAU25)
+                    If Len(row(dt.Columns.Count - 2).ToString) > 0 Then
+                        Dim Mittelwert As Double = CDbl(row("Mittelwert"))
+                        Dim MaxTage As Double = CDbl(txtmaxNutzung.Text)
+                        If Mittelwert < MaxTage Then
+                            Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_HELLORANGE)
+                        Else
+                            If CDbl(row(dt.Columns.Count - 2)) < MaxTage Then
+                                Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_HELLGELB)
+                            Else
+                                Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_HELLGRUEN)
+                            End If
+                        End If
+                    Else
+                        Excel.FillExcel(Spalten, FLPExcel.eExcelFarbe.C_HELLGRUEN)
+                    End If
                 Next
                 Excel.CloseDocument()
                 Me.Cursor = Cursors.Default
@@ -900,19 +963,19 @@ Public Class frmBrowser
                 If selectedMonth <> C_None Then
                     Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where vorname='" & VorNachname(1) &
                                                                  "' and nachname='" & VorNachname(0) & "'" &
-                                                                 " and month='" & selectedMonth & "' order by produkt")
+                                                                 " and month='" & selectedMonth & "' order by produkt,month")
                     dgvSubsriptions.DataSource = dt
                     If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
                 Else
                     Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where vorname='" & VorNachname(1) &
-                                                                 "' and nachname='" & VorNachname(0) & "' order by produkt")
+                                                                 "' and nachname='" & VorNachname(0) & "' order by produkt,month")
                     dgvSubsriptions.DataSource = dt
                     If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
                 End If
             End If
         Else
             If selectedMonth <> C_None Then
-                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where month='" & selectedMonth & "' order by email")
+                Dim dt = cmd.GetTableFromSelect("SYS", "select * from vsubscription where month='" & selectedMonth & "' order by email,month")
                 dgvSubsriptions.DataSource = dt
                 If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
             Else
@@ -1091,7 +1154,7 @@ Public Class frmBrowser
         Dim bedingung = getLizenzBedingung()
 
         If Len(bedingung) > 0 Then
-            Dim dt = cmd.GetTableFromSelect("SYS", "select " & strSpalten & " from vusage where " & bedingung & " order by days_used")
+            Dim dt = cmd.GetTableFromSelect("SYS", "select " & strSpalten & " from vusage where " & bedingung & " order by month, days_used")
             dgvLizenznutzung.DataSource = dt
             If dt IsNot Nothing Then Text = titel & " | " & dt.Rows.Count & " angezeigte Datensätze"
         Else
@@ -1107,8 +1170,16 @@ Public Class frmBrowser
         Dim selectedAbteilung As String = C_None
         Dim selectedProdukt As String = C_None
         Dim selectedZugriff As String = C_None
+        Dim vorname As String = ""
+        Dim nachname As String = ""
         If cbNutzTeam.Items.Count > 0 Then
             selectedBenutzer = cbLizenzBenutzer.SelectedItem.ToString
+            Dim vornamenachname() As String = Split(selectedBenutzer, ",")
+            If vornamenachname.Count = 2 Then
+                nachname = vornamenachname(0)
+                vorname = vornamenachname(1)
+            End If
+
         End If
         If cbNutzMonat.Items.Count > 0 Then
             selectedMonat = cbLizenzMonat.SelectedItem.ToString
@@ -1126,7 +1197,7 @@ Public Class frmBrowser
             selectedZugriff = cbLizenzZugriff.SelectedItem.ToString
         End If
         If selectedBenutzer <> C_None Then
-            retVal &= "and benutzer='" & selectedBenutzer & "' "
+            retVal &= "and vorname='" & Trim(vorname) & "' and nachname='" & Trim(nachname) & "'"
         End If
         If selectedAbteilung <> C_None Then
             retVal &= "and abteilung='" & selectedAbteilung & "' "
@@ -1148,6 +1219,7 @@ Public Class frmBrowser
         End If
         Return retVal
     End Function
+
 #End Region
 
 End Class
